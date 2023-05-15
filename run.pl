@@ -10,7 +10,14 @@ echo([H|T]) :-
     write(H), write(' '),
     echo(T).
 
+tests(X) :-
+    echo(X).
+
 main(Argv) :- 
     echo(Argv),
     halt.
 
+
+tests :-
+    test(X),
+    halt.
