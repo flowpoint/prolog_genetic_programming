@@ -1,6 +1,25 @@
-:- module(genetic_programming, [genetic_programming/1]).
+:- module(genetic_programming, [genetic_programming/3]).
 
-hello(x).
+% taskspec is some structure that contains:
+% initialization/initial population
+% selectionop
+% crossoverop
+% mutationop
+% stopcondition
+% costfunction
 
-genetic_programming(X) :-
-    hello(X).
+task([TaskName, Costfn, Initializer, StopCondition]) :-
+    TaskName = "Learn String",
+    Costfn = _,
+    Initializer = _,
+    StopCondition = _.
+
+%optimizer(Selectionop, Crossoverop, Mutationop).
+optimizer(_,_,_).
+
+ genetic_programming(Task, Optimizer, EvolutionHistory) :-
+     task(Task),
+     Optimizer = _,
+     EvolutionHistory = ["Hello world"].
+
+    
