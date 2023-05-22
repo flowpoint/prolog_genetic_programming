@@ -1,4 +1,5 @@
 :- initialization(main,main).
+:- use_module(src/genetic_programming).
 
 
 echo([]):- nl.
@@ -15,9 +16,7 @@ tests(X) :-
 
 main(Argv) :- 
     echo(Argv),
+    genetic_programming:run_example("Learn String"),
     halt.
 
 
-tests :-
-    test(X),
-    halt.
