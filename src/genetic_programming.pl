@@ -9,13 +9,14 @@ population(X) :-
     is_list(X),
     maplist(gene, X).
 
-epoch(X) :-
+% metrics are stats we want to save like costs and what evolution step we are at
+epoch(X, Metrics) :-
+    Metrics = [],
     population(X).
 
 evolutionhistory(X) :-
     is_list(X),
     maplist(epoch, X).
-
 
 task([
     "Learn String", 
@@ -84,14 +85,15 @@ kvs(Costfn, LastEpoch, Pairs) :-
         LastEpoch),
     mapcost(Costfn, LastEpoch, Costs).
 
-selection("top2", [LastEpoch | Prev], Costfn, [NewPopulation, [LastEpoch, Prev] ]) :-
+selection("top2", [LastEpoch | Prev], Costfn, [NewPopulation | [LastEpoch | Prev] ]) :-
     mapcost(Costfn, LastEpoch, Costs),
     pairs_keys_values(
         Pairs, 
         Costs,
         LastEpoch),
     keysort(Pairs, Sorted),
-    take(2, Sorted, NewPopulation).
+    take(2, Sorted, NewPopulationKV),
+    pairs_values(NewPopulationKV, NewPopulation).
 
 crossover("none", [LastEpoch | _], LastEpoch).
 mutate("none", [LastEpoch | _], LastEpoch).
