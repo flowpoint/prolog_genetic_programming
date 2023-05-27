@@ -3,6 +3,8 @@
 :- use_module(core).
 :- use_module(tasks).
 
+:- load_test_files(optimizer).
+:- load_test_files(tasks).
 
 % we start by learning to overfit on the string "Hello world" 
 
@@ -13,32 +15,11 @@ test(genetic_programming) :-
    genetic_programming(Taskname, _, [LastEpoch | _ ]),
    member("Hello world", LastEpoch).
 
-
 test(run_evolution) :-
    Taskname = "Learn String",
    run_evolution(Taskname, _, _, "stopcondition").
 
 
-test(selection) :-
-    selection("top2", [["Hello world", "2","3"]], "accuracy", X),
-    X = [["Hello world","2"],["Hello world","2","3"]].
 
-test(selection) :-
-    selection("top2", [["1", "2","3"]], "accuracy", X),
-    X = [["1","2"],["1","2","3"]].
-
-% for when we have ops that add can add genes, and we start with 0 genes, selection should still work
-test(selection) :-
-    selection("top2", [[]], "accuracy", X),
-    X = [[],[]].
-
-% should fail cause, evolutionhistory is not correct
-test(selection) :-
-    X = [[]],
-    \+ selection("top2", [], "accuracy", X).
-
-
-test(mapcost) :-
-    mapcost("accuracy", ["Hello world","2"], [0,1]).
 
 :- end_tests(genetic_programming).
