@@ -1,18 +1,22 @@
 :- begin_tests(genetic_programming).
 :- use_module(genetic_programming).
-% :- use_module(tasks).
+:- use_module(core).
+:- use_module(tasks).
+
 
 % we start by learning to overfit on the string "Hello world" 
 
 % test that the "Learn String" task is solved optimally, 
 % by the occurence of the string in the last epochs genes
 test(genetic_programming) :-
-   genetic_programming(Task, _, [LastEpoch | _ ]),
+   Taskname = "Learn String",
+   genetic_programming(Taskname, _, [LastEpoch | _ ]),
    member("Hello world", LastEpoch).
 
 
 test(run_evolution) :-
-    run_evolution("Learn String", _, _, "stopcondition").
+   Taskname = "Learn String",
+   run_evolution(Taskname, _, _, "stopcondition").
 
 
 test(selection) :-
