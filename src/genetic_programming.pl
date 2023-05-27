@@ -18,15 +18,6 @@ evolutionhistory(X) :-
     is_list(X),
     maplist(epoch, X).
 
-task([
-    "Learn String", 
-    "accuracy",
-    ["AAAA","BBBBB", "Hello world"],
-    "zero_cost"
-    ]) :-
-        true.
-
-
     % task([TaskName, Costfn, Initializer, StopCondition]) :-
     %     % unique identifier to summarize the task
     %     TaskName = _,
@@ -98,78 +89,84 @@ selection("top2", [LastEpoch | Prev], Costfn, [NewPopulation | [LastEpoch | Prev
 crossover("none", [LastEpoch | _], LastEpoch).
 mutate("none", [LastEpoch | _], LastEpoch).
 
-optimizer([Selectionop, Crossoverop, Mutationop]) :-
+% optimizername, selectionop, crossoverop, mutationsop
+optimizer("stringopt", Selectionop, Crossoverop, Mutationop) :-
     selection(Selectionop, _, _, _),
     crossover(Crossoverop, _, _),
     mutate(Mutationop, _, _).
 
 
 run_evolution(
-    [Taskname, Costfn, Initializer, StopCondition], 
-    [Selectionop, Crossoverop, Mutationop], 
+    Taskname,
+    Optimizername,
     EvolutionHistory,
     "stopcondition"
     ):-
         ( EvolutionHistory = [LastEpoch | _],
+        task(Taskname, Costfn, _, StopCondition),
         stopCondition(StopCondition, Costfn, LastEpoch)
         );
         run_evolution(
-            [Taskname, Costfn, Initializer, StopCondition], 
-            [Selectionop, Crossoverop, Mutationop], 
+            Taskname,
+            Optimizername,
             EvolutionHistory,
             "select"
             ).
 
 run_evolution(
-    [Taskname, Costfn, Initializer, StopCondition], 
-    [Selectionop, Crossoverop, Mutationop], 
+    Taskname,
+    Optimizername,
     EvolutionHistory,
     "select"
     ):-
+        task(Taskname, Costfn, _, _),
+        optimizer(Optimizername, Selectionop, _, _),
         selection(Selectionop, EvolutionHistory, Costfn, NewHistory),
         run_evolution(
-            [Taskname, Costfn, Initializer, StopCondition], 
-            [Selectionop, Crossoverop, Mutationop], 
+            Taskname,
+            Optimizername,
             NewHistory,
             "crossover"
             ).
 
 run_evolution(
-    [Taskname, Costfn, Initializer, StopCondition], 
-    [Selectionop, Crossoverop, Mutationop], 
+    Taskname,
+    Optimizername,
     EvolutionHistory,
     "crossover"
     ):-
+        task(Taskname, Costfn, _, _),
+        optimizer(Optimizername, Selectionop, _, _),
         crossover(Selectionop, EvolutionHistory, Costfn, NewHistory),
         run_evolution(
-            [Taskname, Costfn, Initializer, StopCondition], 
-            [Selectionop, Crossoverop, Mutationop], 
+            Taskname,
+            Optimizername,
             NewHistory,
             "mutate"
             ).
 
 run_evolution(
-    [Taskname, Costfn, Initializer, StopCondition], 
-    [Selectionop, Crossoverop, Mutationop], 
+    Taskname,
+    Optimizername,
     EvolutionHistory,
     "mutate"
     ):-
+        task(Taskname, Costfn, _, _),
+        optimizer(Optimizername, Selectionop, _, _),
         mutate(Selectionop, EvolutionHistory, Costfn, NewHistory),
         run_evolution(
-            [Taskname, Costfn, Initializer, StopCondition], 
-            [Selectionop, Crossoverop, Mutationop], 
+            Taskname,
+            Optimizername,
             NewHistory,
             "stopcondition"
             ).
 
 
-genetic_programming(Task, Optimizer, EvolutionHistory) :-
-    task(Task),
-    optimizer(Optimizer),
-    evolutionhistory(EvolutionHistory),
-    run_evolution(Task, Optimizer, EvolutionHistory, "stopcondition").
+genetic_programming(Taskname, Optimizername, EvolutionHistory) :-
+    run_evolution(Taskname, Optimizername, EvolutionHistory, "stopcondition").
 
     
 run_example(X):-
-    (X="Learn String", 
-        genetic_programming(["Learn String"|_], _, ["Hello world"])).
+    (Taskname="Learn String", 
+    Optimizername="stringopt",
+        genetic_programming(Taskname, Optimizername, X)).
