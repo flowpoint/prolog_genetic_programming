@@ -1,4 +1,4 @@
-:- module(tasks, [task/4, costfn/3, stopcondition/3, mapcost/3]).
+:- module(tasks, [task/4, costfn/3, stopcondition/3, mapcost/3, levenshtein/3]).
 :- use_module(core).
 
 % task([TaskName, Costfn, Initializer, StopCondition]) :-
@@ -22,6 +22,12 @@ task(
     "zero_cost"
     ) :-
         true.
+
+% maybe look here https://occasionallycogent.com/levenshtein_distance/index.html
+levenshtein(Input, Target, Distance).
+
+% additionally, maybe implement the other cost function from the python example
+
 
 %levenshtein(A,B, Cost).
 % per gene cost fn

@@ -74,7 +74,8 @@ genetic_programming(Taskname, Optimizername, EvolutionHistory) :-
     run_evolution(Taskname, Optimizername, EvolutionHistory, "stopcondition").
 
     
-run_example(X):-
-    (Taskname="Learn String", 
+run_example(Taskname):-
+    Taskname="Learn String",
     Optimizername="stringopt",
-        genetic_programming(Taskname, Optimizername, X)).
+    genetic_programming(Taskname, Optimizername, X),
+    write(X).
