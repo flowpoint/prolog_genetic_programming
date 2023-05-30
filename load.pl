@@ -1,2 +1,1 @@
-
-main(1).
+:- use_module(src/genetic_programming).

@@ -1,4 +1,4 @@
-:- module(tasks, [task/4, costfn/3, stopcondition/3, mapcost/3, levenshtein/3]).
+:- module(tasks, [task/4, costfn/3, stopcondition/3, mapcost/3, levenshtein/3, tail/3]).
 :- use_module(core).
 
 % task([TaskName, Costfn, Initializer, StopCondition]) :-
@@ -23,8 +23,40 @@ task(
     ) :-
         true.
 
+tail(String, Head, Tail) :- 
+    sub_string(String, 1, _, 0, Tail), 
+    sub_string(String, 0, 1, _, Head), 
+    !.
+
+
+
 % maybe look here https://occasionallycogent.com/levenshtein_distance/index.html
-levenshtein(Input, Target, Distance).
+% levenshtein(Input, Target, Distance).
+levenshtein(Input, Target, Distance):-
+    string_length(Input,0),
+    string_length(Target,Distance).
+
+levenshtein(Input, Target, Distance):-
+    string_length(Target,0),
+    string_length(Input,Distance),
+    !.
+
+levenshtein(Input, Target, Distance):-
+    tail(Input, S, It),
+    tail(Target, S, Tt),
+    levenshtein(It,Tt,Distance),
+    !.
+
+levenshtein(Input, Target, Distance):-
+    tail(Input,_,It),
+    tail(Target,_,Tt),
+    levenshtein(It,Target,D1),
+    levenshtein(Input,Tt,D2),
+    levenshtein(It,Tt,D3),
+    min_list([D1,D2,D3], Olddistance),
+    Distance is Olddistance+1,
+    !.
+
 
 % additionally, maybe implement the other cost function from the python example
 
