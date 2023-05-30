@@ -1,4 +1,4 @@
-:- module(tasks, [task/4, costfn/3, stopcondition/3, mapcost/3, levenshtein/3, tail/3]).
+:- module(tasks, [task/4, costfn/3, stopcondition/3, mapcost/3, levenshtein/3]).
 :- use_module(core).
 
 % task([TaskName, Costfn, Initializer, StopCondition]) :-
@@ -28,13 +28,12 @@ tail(String, Head, Tail) :-
     sub_string(String, 0, 1, _, Head), 
     !.
 
-
-
 % maybe look here https://occasionallycogent.com/levenshtein_distance/index.html
 % levenshtein(Input, Target, Distance).
 levenshtein(Input, Target, Distance):-
     string_length(Input,0),
-    string_length(Target,Distance).
+    string_length(Target,Distance),
+    !.
 
 levenshtein(Input, Target, Distance):-
     string_length(Target,0),
@@ -66,6 +65,9 @@ levenshtein(Input, Target, Distance):-
 costfn("accuracy", Gene, Cost) :-
     (Cost = 0, Gene = "Hello world");
     Cost = 1.
+
+costfn("levenshtein", Gene, Cost) :-
+    levenshtein(Gene, "Hello world", Cost).
 
 % costfn("abs", Gene, Cost) :-
 %    atom_number(Gene, Cost).

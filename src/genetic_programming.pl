@@ -45,7 +45,7 @@ run_evolution(
     ):-
         task(Taskname, Costfn, _, _),
         optimizer(Optimizername, Selectionop, _, _),
-        crossover(Selectionop, EvolutionHistory, Costfn, NewHistory),
+        crossover(Selectionop, EvolutionHistory, NewHistory),
         run_evolution(
             Taskname,
             Optimizername,
@@ -61,7 +61,7 @@ run_evolution(
     ):-
         task(Taskname, Costfn, _, _),
         optimizer(Optimizername, Selectionop, _, _),
-        mutate(Selectionop, EvolutionHistory, Costfn, NewHistory),
+        mutate(Selectionop, EvolutionHistory, NewHistory),
         run_evolution(
             Taskname,
             Optimizername,
