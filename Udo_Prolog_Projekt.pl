@@ -11,9 +11,11 @@
 
 % ========================================================================================
 
+% C:/Programme/swipl/bin/swipl   
+
+% ========================================================================================
+
 % Generate a random gene
-% Gene has 3 attributes: Code: 4 ASCII Values | Mutate_Chance: Random value between 1 - 10 | Cost_Value: Calculated cost
-% generate_random_gene("Hell", Gene).
 generate_random_gene(Target, gene(Code, Mutate_Chance, Cost_Value)) :-
     % Code1: A random number between 33-126
     random_between(33, 126, Code1),
@@ -35,6 +37,18 @@ generate_random_gene(Target, gene(Code, Mutate_Chance, Cost_Value)) :-
     % Calculate the cost for the generated gene
     calculate_target_cost(Code, Target, Cost_Value).
 
+% Helper predicate to generate a list of random genes
+% Base case: Empty list
+generate_genes_list_helper(_, 0, []).
+% Recursive case: Generate a random gene and append it to the list
+generate_genes_list_helper(Target, N, [Gene|Rest]) :-
+    N > 0,
+    generate_random_gene(Target, Gene),
+    N1 is N - 1,
+    generate_genes_list_helper(Target, N1, Rest).
+
+% ========================================================================================
+
 % Calculate the cost for a gene based on the target string
 calculate_target_cost(Code, Target, Cost) :-
     string_chars(Target, TargetChars),
@@ -43,26 +57,17 @@ calculate_target_cost(Code, Target, Cost) :-
 
 % Base case: Empty lists
 calculate_cost_helper([], [], Acc, Acc).
-
-% Calculate the cost for each pair of characters
-%calculate_cost_helper([C1 | CodeRest], [T1 | TargetRest], Acc, Cost) :-
-    % Convert characters to ASCII values
-%    char_code(C1, ASCII1),
-%    char_code(T1, ASCII2),
-    % Calculate the cost as described: (ASCII1^2 + ASCII2^2)^(1/2)
-%    Cost1 is sqrt(ASCII1**2 + ASCII2**2),
-    % Add the cost to the accumulator
-%    NewAcc is Acc + Cost1,
-    % Recurse for the remaining characters
-%    calculate_cost_helper(CodeRest, TargetRest, NewAcc, Cost).
-
+% Base case: Code is empty
 calculate_cost_helper([], [], Acc, Acc).
+% Base case: Target is empty
 calculate_cost_helper(Code, [], Acc, Cost) :-
     length(Code, CodeLength),
     Cost is Acc + (2000 * CodeLength).
+% Base case: Code is empty
 calculate_cost_helper([], Target, Acc, Cost) :-
     length(Target, TargetLength),
     Cost is Acc + (2000 * TargetLength).
+% Calculate the cost for each pair of characters
 calculate_cost_helper([C1 | CodeRest], [T1 | TargetRest], Acc, Cost) :-
     char_code(C1, ASCII1),
     char_code(T1, ASCII2),
@@ -72,15 +77,18 @@ calculate_cost_helper([C1 | CodeRest], [T1 | TargetRest], Acc, Cost) :-
 
 % ========================================================================================
 
-% Generate a list of random genes
-% generate_genes_list("Hello", Genes).
-generate_genes_list(Target, Genes) :-
-    generate_genes_list_helper(Target, 100, Genes).
+% Sort a list of genes by their cost
+sort_genes_list(Genes, SortedGenes) :-
+    predsort(compare_genes, Genes, SortedGenes).
 
-% Helper predicate to generate a list of random genes
-generate_genes_list_helper(_, 0, []).
-generate_genes_list_helper(Target, N, [Gene|Rest]) :-
-    N > 0,
-    generate_random_gene(Target, Gene),
-    N1 is N - 1,
-    generate_genes_list_helper(Target, N1, Rest).
+% Comparison predicate for sorting genes based on their cost
+compare_genes(Order, gene(_, _, Cost1), gene(_, _, Cost2)) :-
+    compare(Order, Cost1, Cost2).
+
+% ========================================================================================
+
+% Main predicate to generate a list of random genes and sort them by their cost
+% generate_genes_list("Hello", Genes).
+generate_genes_list(Target, Size, SortedGenes) :-
+    generate_genes_list_helper(Target, Size, Genes),
+    sort_genes_list(Genes, SortedGenes).
