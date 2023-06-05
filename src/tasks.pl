@@ -86,13 +86,12 @@ generate_random_code_helper(Length, Acc, Gene) :-
 
 
 % Rework in Progress
-qudratic_cost(Genes, Target, Population) :-
+quadratic_cost(Input, Target, Cost) :-
     string_chars(Target, TargetChars),
-    calculate_cost_helper(Code, TargetChars, 0, Cost).
+    string_chars(Input, InputChars),
+    calculate_cost_helper(InputChars, TargetChars, 0, Cost).
 
-% Base case: Empty lists
-calculate_cost_helper([], [], Acc, Acc).
-% Base case: Code is empty
+% Base case: Input and Target is empty
 calculate_cost_helper([], [], Acc, Acc).
 % Base case: Target is empty
 calculate_cost_helper(Code, [], Acc, Cost) :-
@@ -106,7 +105,7 @@ calculate_cost_helper([], Target, Acc, Cost) :-
 calculate_cost_helper([C1 | CodeRest], [T1 | TargetRest], Acc, Cost) :-
     char_code(C1, ASCII1),
     char_code(T1, ASCII2),
-    Cost1 is sqrt(ASCII1**2 + ASCII2**2),
-    NewAcc is Acc + Cost1,
+    Cost_tmp is sqrt((ASCII2**2) - (ASCII1**2)),
+    NewAcc is Acc + Cost_tmp,
     calculate_cost_helper(CodeRest, TargetRest, NewAcc, Cost).
 
