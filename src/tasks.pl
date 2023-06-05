@@ -86,7 +86,6 @@ generate_random_code_helper(Length, Acc, Gene) :-
 
 
 % Rework in Progress
-
 qudratic_cost(Genes, Target, Population) :-
     string_chars(Target, TargetChars),
     calculate_cost_helper(Code, TargetChars, 0, Cost).
