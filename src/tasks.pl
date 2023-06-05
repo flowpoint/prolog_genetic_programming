@@ -17,8 +17,8 @@
     
 task(
     "Learn String", 
-    "accuracy",
-    ["AAAA","BBBBB"],
+    "levenshtein",
+    ["", ""],
     "zero_cost"
     ) :-
         true.
@@ -31,7 +31,7 @@ tail(String, Head, Tail) :-
 % maybe look here https://occasionallycogent.com/levenshtein_distance/index.html
 % levenshtein(Input, Target, Distance).
 levenshtein(Input, Target, Distance):-
-    string_length(Input,0),
+    string_length(Input, 0),
     string_length(Target,Distance),
     !.
 
@@ -72,14 +72,16 @@ costfn("levenshtein", Gene, Cost) :-
 % costfn("abs", Gene, Cost) :-
 %    atom_number(Gene, Cost).
 
-stopcondition("zero_cost", Costfn, LastEpoch) :-
-    mapcost(Costfn, LastEpoch, Costs),
-    member(0, Costs).
-
 mapcost(_, [], []).
 mapcost(Costfn, [H|T], [Cost|CT]):-
     costfn(Costfn, H, Cost),
-    mapcost(Costfn, T, CT).
+    mapcost(Costfn, T, CT),
+    !.
+
+stopcondition("zero_cost", Costfn, LastEpoch) :-
+    mapcost(Costfn, LastEpoch, Costs),
+    member(0, Costs),
+    !.
 
 % unused for now
 kvs(Costfn, LastEpoch, Pairs) :-

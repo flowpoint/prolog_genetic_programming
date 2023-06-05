@@ -36,7 +36,7 @@ cross2(Genes, NewGenes) :-
    cross(GeneA,GeneB, GeneNA, GeneNB),
    cross2(R,NR).
 
-crossover("none", [LastEpoch | _], NewHistory) :-
+crossover("headtail", [LastEpoch | _], NewHistory) :-
     cross2(LastEpoch, NewHistory).
 
 % crossover("neighbors_splice", [LastEpoch | _], NewHistory) :-

@@ -4,22 +4,26 @@
 :- use_module(tasks).
 :- use_module(core).
 
+
 run_evolution(
     Taskname,
     Optimizername,
     EvolutionHistory,
     "stopcondition"
     ):-
-        ( EvolutionHistory = [LastEpoch | _],
-        task(Taskname, Costfn, _, StopCondition),
+        ( 
+        task(Taskname, Costfn, Initializer, StopCondition),
+        EvolutionHistory = [LastEpoch | _],
+        last(EvolutionHistory, Initializer),
         stopcondition(StopCondition, Costfn, LastEpoch)
-        );
-        run_evolution(
-            Taskname,
-            Optimizername,
-            EvolutionHistory,
-            "select"
-            ).
+        ).
+        %  ;
+        %      run_evolution(
+        %          Taskname,
+        %          Optimizername,
+        %          EvolutionHistory,
+        %          "select"
+        %          ).
 
 run_evolution(
     Taskname,
@@ -44,8 +48,8 @@ run_evolution(
     "crossover"
     ):-
         task(Taskname, Costfn, _, _),
-        optimizer(Optimizername, Selectionop, _, _),
-        crossover(Selectionop, EvolutionHistory, NewHistory),
+        optimizer(Optimizername, Selectionop, Crossoverop, Mutationop),
+        crossover(Crossoverop, EvolutionHistory, NewHistory),
         run_evolution(
             Taskname,
             Optimizername,
@@ -60,8 +64,8 @@ run_evolution(
     "mutate"
     ):-
         task(Taskname, Costfn, _, _),
-        optimizer(Optimizername, Selectionop, _, _),
-        mutate(Selectionop, EvolutionHistory, NewHistory),
+        optimizer(Optimizername, Selectionop, Crossoverop, Mutationop),
+        mutate(Mutationop, EvolutionHistory, NewHistory),
         run_evolution(
             Taskname,
             Optimizername,

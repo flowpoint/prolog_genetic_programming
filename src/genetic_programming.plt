@@ -19,6 +19,10 @@ test(run_evolution) :-
    Taskname = "Learn String",
    run_evolution(Taskname, _, _, "stopcondition").
 
+test(run_evolution) :-
+   Taskname = "Learn String",
+   run_evolution(Taskname, "stringopt", [["Hello world"], ["", ""]], "stopcondition").
+
 
 
 
