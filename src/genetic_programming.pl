@@ -11,21 +11,25 @@ run_evolution(
     EvolutionHistory,
     "stopcondition"
     ):-
-        ( 
-        task(Taskname, Costfn, [Initializer], StopCondition),
-        EvolutionHistory = [LastEpoch | _],
-        stopcondition(StopCondition, Costfn, LastEpoch),
-        !
-        )
-        ;
+        EvolutionHistory = [L | _],
+        writeln(L),
         (
-        task(Taskname, Costfn, [Initializer], StopCondition),
-        (append(_, [Initializer], EvolutionHistory),!),
-        run_evolution(
-            Taskname,
-            Optimizername,
-            EvolutionHistory,
-            "select"
+            ( 
+            task(Taskname, Costfn, [Initializer], StopCondition),
+            EvolutionHistory = [LastEpoch | _],
+            stopcondition(StopCondition, Costfn, LastEpoch),
+            !
+            )
+            ;
+            (
+            task(Taskname, Costfn, [Initializer], StopCondition),
+            (append(_, [Initializer], EvolutionHistory),!),
+            run_evolution(
+                Taskname,
+                Optimizername,
+                EvolutionHistory,
+                "select"
+                )
             )
         ).
 
@@ -51,8 +55,6 @@ run_evolution(
     EvolutionHistory,
     "crossover"
     ):-
-        EvolutionHistory = [L | _],
-        writeln(L),
         task(Taskname, Costfn, _, _),
         optimizer(Optimizername, Selectionop, Crossoverop, Mutationop),
         crossover(Crossoverop, EvolutionHistory, NewEvolutionHistory),

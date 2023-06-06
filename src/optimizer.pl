@@ -40,7 +40,8 @@ cross2(Genes, NewGenes) :-
 crossover("headtail", EvolutionHistory, NewEvolutionHistory) :-
     EvolutionHistory = [LastEpoch | R],
     NewEvolutionHistory = [NewEpoch | EvolutionHistory],
-    cross2(LastEpoch, NewEpoch),
+    cross2(LastEpoch, Crossed_Epoch),
+    append(Crossed_Epoch, LastEpoch, NewEpoch),
     !.
 
 % crossover("neighbors_splice", [LastEpoch | _], NewHistory) :-
@@ -58,14 +59,14 @@ split_string_pos(Index, String, Split1, Split2) :-
 
 charo(Char) :-
     string_chars(
-    "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ",
+    "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ ",
     L),
     string_chars(Char,C),
     member(C, L).
 
 random_char(Char) :-
     string_chars(
-    "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ",
+    "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ ",
     L),
     random_member(Char, L),
     !

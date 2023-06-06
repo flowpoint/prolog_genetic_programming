@@ -17,22 +17,21 @@
 %
 % target_string("Hello world").
 target_string("Hello").
-    
+
 task(
     "Learn String", 
     "levenshtein",
     [[
-    "Hell",
-    "Hell",
-    "Hell",
-    "Hell",
-    "Hell",
-    "Hell",
-    "Hell",
-    "Hell",
-    "Hell",
-    "Hell",
-    "Hell"
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    ""
     ]],
     "zero_cost"
     ) :-
