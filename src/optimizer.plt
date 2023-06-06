@@ -2,6 +2,7 @@
 :- use_module(genetic_programming).
 :- use_module(core).
 :- use_module(tasks).
+:- use_module(optimizer).
 
 test(selection) :-
     selection("top2", [["Hello world", "2","3"]], "accuracy", X),
@@ -20,5 +21,8 @@ test(selection) :-
 test(selection) :-
     X = [[]],
     \+ selection("top2", [], "accuracy", X).
+
+test(crossover) :-
+    crossover("headtail", [["ANNE", "OTTO"]], [["ANTO", "OTNE"],["ANNE","OTTO"]]).
 
 :- end_tests(optimizer).

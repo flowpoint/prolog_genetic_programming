@@ -13,7 +13,7 @@ epoch(X, Metrics) :-
 
 evolutionhistory(X) :-
     is_list(X),
-    maplist(epoch, X).
+    maplist(population, X).
 
 % originating from: https://stackoverflow.com/questions/27151274/prolog-take-the-first-n-elements-of-a-list
 take(N, _, Xs) :- N =< 0, !, N =:= 0, Xs = [].

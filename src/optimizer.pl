@@ -5,15 +5,16 @@
 :- use_module(tasks).
 
 
-selection("top2", [LastEpoch | Prev], Costfn, [NewPopulation | [LastEpoch | Prev] ]) :-
+selection("top10", Costfn, [LastEpoch | Prev], [NewPopulation | [LastEpoch | Prev] ]) :-
     mapcost(Costfn, LastEpoch, Costs),
     pairs_keys_values(
         Pairs, 
         Costs,
         LastEpoch),
     keysort(Pairs, Sorted),
-    take(2, Sorted, NewPopulationKV),
-    pairs_values(NewPopulationKV, NewPopulation).
+    take(10, Sorted, NewPopulationKV),
+    pairs_values(NewPopulationKV, NewPopulation),
+    !.
 
 string_halves(S, Half1, Half2) :-
     string_length(S,Sl),
@@ -25,7 +26,7 @@ cross(GeneA, GeneB, NewGeneA, NewGeneB):-
     string_halves(GeneA, GA1, GA2),
     string_halves(GeneB, GB1, GB2),
     string_concat(GA1,GB2,NewGeneA),
-    string_concat(GA2,GB1,NewGeneB),
+    string_concat(GB1,GA2,NewGeneB),
     !.
 
 cross2([], []).
@@ -36,8 +37,11 @@ cross2(Genes, NewGenes) :-
    cross(GeneA,GeneB, GeneNA, GeneNB),
    cross2(R,NR).
 
-crossover("headtail", [LastEpoch | _], NewHistory) :-
-    cross2(LastEpoch, NewHistory).
+crossover("headtail", EvolutionHistory, NewEvolutionHistory) :-
+    EvolutionHistory = [LastEpoch | R],
+    NewEvolutionHistory = [NewEpoch | EvolutionHistory],
+    cross2(LastEpoch, NewEpoch),
+    !.
 
 % crossover("neighbors_splice", [LastEpoch | _], NewHistory) :-
 
@@ -84,12 +88,14 @@ mutate_pos("insertion", Index, Gene, NewGene) :-
     string_chars(NewGene, NewChars),
     !.
 
+mutate_pos("deletion", _, "", "").
 mutate_pos("deletion", Index, Gene, NewGene) :-
     string_chars(Gene,Chars),
     nth0(Index, Chars, _, NewChars),
     string_chars(NewGene,NewChars),
     !.
 
+mutate_pos("replacement", _, "", "").
 mutate_pos("replacement", Index, Gene, NewGene) :-
     random_char(E),
     nth0(Index, Chars, _, MidGene),
@@ -104,10 +110,17 @@ mutate_pos("replacement", Index, Gene, NewGene) :-
 %     random_char(N),
 %     NewGene = [ Split1 | [ N | Split2 ]].
 
+mutate_gene(Gene, NewGene) :-
+    gene(Gene),
+    string_length(Gene,0),
+    mutate_pos("insertion", 0, Gene, NewGene),
+    !.
 
 mutate_gene(Gene, NewGene) :-
+    gene(Gene),
     string_length(Gene, L),
-    random_between(0, L, Index),
+    K is L-1,
+    random_between(0, K, Index),
     random_member(Indel, ["insertion","deletion","replacement"]),
     mutate_pos(Indel, Index, Gene, NewGene),
     !.
@@ -117,10 +130,11 @@ map_mutate_gene([G | R], [NewG | NR]):-
     mutate_gene(G, NewG),
     map_mutate_gene(R,NR).
 
-mutate("none", [LastEpoch | _], NewHistory) :-
-    map_mutate_gene(LastEpoch, NewHistory).
+mutate("indel", EvolutionHistory, NewHistory) :-
+    EvolutionHistory = [LastEpoch | _],
+    NewHistory = [NewEpoch | EvolutionHistory],
+    map_mutate_gene(LastEpoch, NewEpoch).
 
-% optimizername, selectionop, crossoverop, mutationsop
 optimizer("stringopt", Selectionop, Crossoverop, Mutationop) :-
     selection(Selectionop, _, _, _),
     crossover(Crossoverop, _, _),

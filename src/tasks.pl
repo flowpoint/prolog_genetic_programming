@@ -18,7 +18,19 @@
 task(
     "Learn String", 
     "levenshtein",
-    ["", ""],
+    [[
+    "Hello worl",
+    "Hello worl",
+    "Hello worl",
+    "Hello worl",
+    "Hello worl",
+    "Hello worl",
+    "Hello worl",
+    "Hello worl",
+    "Hello worl",
+    "Hello worl",
+    "Hello worl"
+    ]],
     "zero_cost"
     ) :-
         true.
@@ -67,26 +79,22 @@ costfn("accuracy", Gene, Cost) :-
     Cost = 1.
 
 costfn("levenshtein", Gene, Cost) :-
-    levenshtein(Gene, "Hello world", Cost).
+    gene(Gene),
+    levenshtein(Gene, "Hello world", Cost),
+    !.
 
 % costfn("abs", Gene, Cost) :-
 %    atom_number(Gene, Cost).
 
-mapcost(_, [], []).
+mapcost(Costfn, [T], [CT]):-
+    costfn(Costfn, T, CT),
+    !.
 mapcost(Costfn, [H|T], [Cost|CT]):-
     costfn(Costfn, H, Cost),
     mapcost(Costfn, T, CT),
     !.
 
-stopcondition("zero_cost", Costfn, LastEpoch) :-
-    mapcost(Costfn, LastEpoch, Costs),
+stopcondition("zero_cost", Costfn, Epoch) :-
+    mapcost(Costfn, Epoch, Costs),
     member(0, Costs),
     !.
-
-% unused for now
-kvs(Costfn, LastEpoch, Pairs) :-
-    pairs_keys_values(
-        Pairs,
-        Costs,
-        LastEpoch),
-    mapcost(Costfn, LastEpoch, Costs).

@@ -12,18 +12,22 @@ run_evolution(
     "stopcondition"
     ):-
         ( 
-        task(Taskname, Costfn, Initializer, StopCondition),
+        task(Taskname, Costfn, [Initializer], StopCondition),
         EvolutionHistory = [LastEpoch | _],
-        last(EvolutionHistory, Initializer),
-        stopcondition(StopCondition, Costfn, LastEpoch)
+        stopcondition(StopCondition, Costfn, LastEpoch),
+        !
+        )
+        ;
+        (
+        task(Taskname, Costfn, [Initializer], StopCondition),
+        (append(_, [Initializer], EvolutionHistory),!),
+        run_evolution(
+            Taskname,
+            Optimizername,
+            EvolutionHistory,
+            "select"
+            )
         ).
-        %  ;
-        %      run_evolution(
-        %          Taskname,
-        %          Optimizername,
-        %          EvolutionHistory,
-        %          "select"
-        %          ).
 
 run_evolution(
     Taskname,
@@ -33,11 +37,11 @@ run_evolution(
     ):-
         task(Taskname, Costfn, _, _),
         optimizer(Optimizername, Selectionop, _, _),
-        selection(Selectionop, EvolutionHistory, Costfn, NewHistory),
+        selection(Selectionop, Costfn, EvolutionHistory, NewEvolutionHistory), 
         run_evolution(
             Taskname,
             Optimizername,
-            NewHistory,
+            NewEvolutionHistory,
             "crossover"
             ).
 
@@ -47,13 +51,15 @@ run_evolution(
     EvolutionHistory,
     "crossover"
     ):-
+        EvolutionHistory = [L | _],
+        write(L),
         task(Taskname, Costfn, _, _),
         optimizer(Optimizername, Selectionop, Crossoverop, Mutationop),
-        crossover(Crossoverop, EvolutionHistory, NewHistory),
+        crossover(Crossoverop, EvolutionHistory, NewEvolutionHistory),
         run_evolution(
             Taskname,
             Optimizername,
-            NewHistory,
+            NewEvolutionHistory,
             "mutate"
             ).
 
@@ -65,11 +71,11 @@ run_evolution(
     ):-
         task(Taskname, Costfn, _, _),
         optimizer(Optimizername, Selectionop, Crossoverop, Mutationop),
-        mutate(Mutationop, EvolutionHistory, NewHistory),
+        mutate(Mutationop, EvolutionHistory, NewEvolutionHistory),
         run_evolution(
             Taskname,
             Optimizername,
-            NewHistory,
+            NewEvolutionHistory,
             "stopcondition"
             ).
 
