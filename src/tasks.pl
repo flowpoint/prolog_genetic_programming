@@ -14,22 +14,25 @@
 %     Initializer = _,
 %     % the stopcondition defines when a task is achieved
 %     StopCondition = _.
+%
+% target_string("Hello world").
+target_string("Hello").
     
 task(
     "Learn String", 
     "levenshtein",
     [[
-    "Hello worl",
-    "Hello worl",
-    "Hello worl",
-    "Hello worl",
-    "Hello worl",
-    "Hello worl",
-    "Hello worl",
-    "Hello worl",
-    "Hello worl",
-    "Hello worl",
-    "Hello worl"
+    "Hell",
+    "Hell",
+    "Hell",
+    "Hell",
+    "Hell",
+    "Hell",
+    "Hell",
+    "Hell",
+    "Hell",
+    "Hell",
+    "Hell"
     ]],
     "zero_cost"
     ) :-
@@ -75,12 +78,14 @@ levenshtein(Input, Target, Distance):-
 %levenshtein(A,B, Cost).
 % per gene cost fn
 costfn("accuracy", Gene, Cost) :-
-    (Cost = 0, Gene = "Hello world");
+    target_string(T),
+    (Cost = 0, Gene = T);
     Cost = 1.
 
 costfn("levenshtein", Gene, Cost) :-
     gene(Gene),
-    levenshtein(Gene, "Hello world", Cost),
+    target_string(T),
+    levenshtein(Gene, T, Cost),
     !.
 
 % costfn("abs", Gene, Cost) :-

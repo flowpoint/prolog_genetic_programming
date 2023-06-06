@@ -52,7 +52,7 @@ run_evolution(
     "crossover"
     ):-
         EvolutionHistory = [L | _],
-        write(L),
+        writeln(L),
         task(Taskname, Costfn, _, _),
         optimizer(Optimizername, Selectionop, Crossoverop, Mutationop),
         crossover(Crossoverop, EvolutionHistory, NewEvolutionHistory),

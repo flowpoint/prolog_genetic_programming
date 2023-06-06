@@ -132,8 +132,10 @@ map_mutate_gene([G | R], [NewG | NR]):-
 
 mutate("indel", EvolutionHistory, NewHistory) :-
     EvolutionHistory = [LastEpoch | _],
-    NewHistory = [NewEpoch | EvolutionHistory],
-    map_mutate_gene(LastEpoch, NewEpoch).
+    NewHistory = [ NewEpoch | EvolutionHistory],
+    map_mutate_gene(LastEpoch, Mutated_epoch),
+    append(Mutated_epoch, LastEpoch, NewEpoch),
+    !.
 
 optimizer("stringopt", Selectionop, Crossoverop, Mutationop) :-
     selection(Selectionop, _, _, _),
