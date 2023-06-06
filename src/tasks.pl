@@ -1,4 +1,4 @@
-:- module(tasks, [task/4, costfn/3, stopcondition/3, mapcost/3, levenshtein/3]).
+:- module(tasks, [task/4, costfn/3, stopcondition/3, mapcost/3, levenshtein/3, quadratic_cost/3]).
 :- use_module(core).
 
 % task([TaskName, Costfn, Initializer, StopCondition]) :-
@@ -105,7 +105,7 @@ calculate_cost_helper([], Target, Acc, Cost) :-
 calculate_cost_helper([C1 | CodeRest], [T1 | TargetRest], Acc, Cost) :-
     char_code(C1, ASCII1),
     char_code(T1, ASCII2),
-    Cost_tmp is sqrt((ASCII2**2) - (ASCII1**2)),
+    Cost_tmp is sqrt(abs((ASCII2**2) - (ASCII1**2))),
     NewAcc is Acc + Cost_tmp,
     calculate_cost_helper(CodeRest, TargetRest, NewAcc, Cost).
 
