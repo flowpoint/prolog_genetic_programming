@@ -83,7 +83,7 @@ run_evolution(
 
 
 genetic_programming(Taskname, Optimizername, EvolutionHistory) :-
-    run_evolution(Taskname, Optimizername, EvolutionHistory, "stopcondition").
+    run_evolution(Taskname, Optimizername, EvolutionHistory, "stopcondition"), !.
 
     
 run_example(Taskname):-

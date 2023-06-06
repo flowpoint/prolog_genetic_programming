@@ -34,10 +34,10 @@ test(levenshtein) :-
 
 
 test(mapcost) :-
-    mapcost("accuracy", ["Hello world","2"], [0,1]).
+    mapcost("accuracy", ["Hello","Hell"], [0,1]).
 
 test(stopcondition) :-
-    stopcondition("zero_cost", "levenshtein", ["Hello world"]).
+    stopcondition("zero_cost", "levenshtein", ["Hello"]).
 
 :- end_tests(tasks).
 

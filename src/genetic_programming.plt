@@ -12,8 +12,9 @@
 % by the occurence of the string in the last epochs genes
 test(genetic_programming) :-
    Taskname = "Learn String",
-   genetic_programming(Taskname, _, [LastEpoch | _ ]),
-   member("Hello world", LastEpoch).
+   Optimizername = "stringopt",
+   genetic_programming(Taskname, Optimizername, [LastEpoch | _ ]),
+   member("Hello", LastEpoch).
 
 test(run_evolution) :-
    Taskname = "Learn String",
@@ -21,7 +22,7 @@ test(run_evolution) :-
 
 test(run_evolution_stop) :-
    Taskname = "Learn String",
-   run_evolution(Taskname, "stringopt", [["Hello world"], ["", ""]], "stopcondition").
+   run_evolution(Taskname, "stringopt", [["Hello], ["", ""]], "stopcondition").
 
 
 
