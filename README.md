@@ -14,5 +14,5 @@ this runs the genetic programming to overfit on the string "Hello" and prints th
 ``` 
 swipl
 ?- [load].
-?- run_evolution("Learn String", "stringopt", EvolutionHistory, "stopcondition"), EvolutionHistory = [ LastEpoch | _ ], writeln(LastEpoch), !.
+?- run_evolution("Learn String", "stringopt", _, EvolutionHistory, "stopcondition"), EvolutionHistory = [ LastEpoch | _ ], writeln(LastEpoch), !.
 ```

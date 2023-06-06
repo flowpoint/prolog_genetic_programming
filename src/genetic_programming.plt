@@ -18,11 +18,11 @@ test(genetic_programming) :-
 
 test(run_evolution) :-
    Taskname = "Learn String",
-   run_evolution(Taskname, _, _, "stopcondition").
+   run_evolution(Taskname, _, _,_, "stopcondition").
 
 test(run_evolution_stop) :-
    Taskname = "Learn String",
-   run_evolution(Taskname, "stringopt", [["Hello], ["", ""]], "stopcondition").
+   run_evolution(Taskname, "stringopt", _, [["Hello], ["", ""]], "stopcondition").
 
 
 
