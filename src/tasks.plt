@@ -35,7 +35,10 @@ test(levenshtein) :-
 
 
 test(mapcost) :-
-    mapcost("accuracy", ["Hello world","2"], [0,1]).
+    mapcost("accuracy", ["Hello","Hell"], [0,1]).
+
+test(stopcondition) :-
+    stopcondition("zero_cost", "levenshtein", ["Hello"]).
 
 % Test quadratic cost function
 % Test: Input and Target are the same -> Cost = 0

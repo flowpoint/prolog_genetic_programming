@@ -14,17 +14,62 @@
 %     Initializer = _,
 %     % the stopcondition defines when a task is achieved
 %     StopCondition = _.
-    
+%
+% target_string("Hello world").
+target_string("Hello").
+
 task(
     "Learn String", 
-    "accuracy",
-    ["AAAA","BBBBB"],
+    "levenshtein",
+    [[
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    ""
+    ]],
     "zero_cost"
     ) :-
         true.
 
+tail(String, Head, Tail) :- 
+    sub_string(String, 1, _, 0, Tail), 
+    sub_string(String, 0, 1, _, Head), 
+    !.
+
 % maybe look here https://occasionallycogent.com/levenshtein_distance/index.html
-levenshtein(Input, Target, Distance).
+% levenshtein(Input, Target, Distance).
+levenshtein(Input, Target, Distance):-
+    string_length(Input, 0),
+    string_length(Target,Distance),
+    !.
+
+levenshtein(Input, Target, Distance):-
+    string_length(Target,0),
+    string_length(Input,Distance),
+    !.
+
+levenshtein(Input, Target, Distance):-
+    tail(Input, S, It),
+    tail(Target, S, Tt),
+    levenshtein(It,Tt,Distance),
+    !.
+
+levenshtein(Input, Target, Distance):-
+    tail(Input,_,It),
+    tail(Target,_,Tt),
+    levenshtein(It,Target,D1),
+    levenshtein(Input,Tt,D2),
+    levenshtein(It,Tt,D3),
+    min_list([D1,D2,D3], Olddistance),
+    Distance is Olddistance+1,
+    !.
+
 
 % additionally, maybe implement the other cost function from the python example
 
@@ -32,21 +77,28 @@ levenshtein(Input, Target, Distance).
 %levenshtein(A,B, Cost).
 % per gene cost fn
 costfn("accuracy", Gene, Cost) :-
-    (Cost = 0, Gene = "Hello world");
+    target_string(T),
+    (Cost = 0, Gene = T);
     Cost = 1.
+
+costfn("levenshtein", Gene, Cost) :-
+    gene(Gene),
+    target_string(T),
+    levenshtein(Gene, T, Cost),
+    !.
 
 % costfn("abs", Gene, Cost) :-
 %    atom_number(Gene, Cost).
 
-stopcondition("zero_cost", Costfn, LastEpoch) :-
-    mapcost(Costfn, LastEpoch, Costs),
-    member(0, Costs).
-
-mapcost(_, [], []).
+mapcost(Costfn, [T], [CT]):-
+    costfn(Costfn, T, CT),
+    !.
 mapcost(Costfn, [H|T], [Cost|CT]):-
     costfn(Costfn, H, Cost),
-    mapcost(Costfn, T, CT).
+    mapcost(Costfn, T, CT),
+    !.
 
+<<<<<<< HEAD
 % unused for now
 kvs(Costfn, LastEpoch, Pairs) :-
     pairs_keys_values(
@@ -109,3 +161,9 @@ calculate_cost_helper([C1 | CodeRest], [T1 | TargetRest], Acc, Cost) :-
     NewAcc is Acc + Cost_tmp,
     calculate_cost_helper(CodeRest, TargetRest, NewAcc, Cost).
 
+=======
+stopcondition("zero_cost", Costfn, Epoch) :-
+    mapcost(Costfn, Epoch, Costs),
+    member(0, Costs),
+    !.
+>>>>>>> dev

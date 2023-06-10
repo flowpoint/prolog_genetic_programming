@@ -1,2 +1,5 @@
+:- use_module(src/genetic_programming).
 
-main(1).
+% perftests:
+% tasks:call_time(levenshtein("aaaaaaaaaaa", "bbbbbbbbbbb", Dist), Time).
+% 
