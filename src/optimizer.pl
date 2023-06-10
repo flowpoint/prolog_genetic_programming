@@ -21,3 +21,11 @@ optimizer("stringopt", Selectionop, Crossoverop, Mutationop) :-
     crossover(Crossoverop, _, _),
     mutate(Mutationop, _, _).
 
+% Sort a list of genes by their cost
+sort_genes_list(Genes, SortedGenes) :-
+    predsort(compare_genes, Genes, SortedGenes).
+
+% Comparison predicate for sorting genes based on their cost
+% Constructor has to be adjusted to selection operator
+compare_genes(Order, gene(_, _, Cost1), gene(_, _, Cost2)) :-
+    compare(Order, Cost1, Cost2).
