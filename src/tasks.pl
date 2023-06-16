@@ -37,6 +37,35 @@ task(
     ) :-
         true.
 
+task(
+    "Learn String A", 
+    "quadratic_cost",
+    [[
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    ""
+    ]],
+    "zero_cost"
+    ) :-
+        true.
+
+task3(
+    "String Learning B",
+    "quadratic_cost",
+    Initializer,
+    "zero_cost"
+) :-
+    generate_population(10, 10, Population),
+    Initializer =[[Population]].
+        
+
 tail(String, Head, Tail) :- 
     sub_string(String, 1, _, 0, Tail), 
     sub_string(String, 0, 1, _, Head), 
@@ -87,6 +116,12 @@ costfn("levenshtein", Gene, Cost) :-
     levenshtein(Gene, T, Cost),
     !.
 
+costfn("quadratic_cost", Gene, Cost) :-
+    gene(Gene),
+    target_string(T),
+    quadratic_cost(Gene, T, Cost),
+    !.
+
 % costfn("abs", Gene, Cost) :-
 %    atom_number(Gene, Cost).
 
@@ -100,7 +135,7 @@ mapcost(Costfn, [H|T], [Cost|CT]):-
 
 stopcondition("zero_cost", Costfn, Epoch) :-
     mapcost(Costfn, Epoch, Costs),
-    member(0, Costs),
+    member(0.0, Costs),
     !.
 
 % Generate a list with random genes.
