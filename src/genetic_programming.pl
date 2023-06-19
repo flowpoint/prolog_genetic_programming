@@ -14,7 +14,7 @@ run_evolution(
     "stopcondition"
     ):-
         EvolutionHistory = [L | _],
-        %writeln(L),
+        writeln(L),
         (
             (
                 task(Taskname, Costfn, [InitialEpoch], StopCondition),
@@ -96,6 +96,7 @@ genetic_programming(Taskname, Optimizername, EvolutionHistory) :-
 
     
 run_example(Taskname):-
+    Taskname="Learn String",
     Optimizername="stringopt",
     genetic_programming(Taskname, Optimizername, X),
     write(X).

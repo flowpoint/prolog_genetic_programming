@@ -142,4 +142,3 @@ optimizer("stringopt", Selectionop, Crossoverop, Mutationop) :-
     selection(Selectionop, _, _, _),
     crossover(Crossoverop, _, _),
     mutate(Mutationop, _, _).
-

@@ -22,21 +22,9 @@ test(run_evolution) :-
 
 test(run_evolution_stop) :-
    Taskname = "Learn String",
-   run_evolution(Taskname, "stringopt", _, [["Hello"], ["", ""]], "stopcondition").
+   run_evolution(Taskname, "stringopt", _, [["Hello], ["", ""]], "stopcondition").
 
 
-test(genetic_programming) :-
-   Taskname = "Learn String A",
-   Optimizername = "stringopt",
-   genetic_programming(Taskname, Optimizername, [LastEpoch | _ ]),
-   member("Hello", LastEpoch).
 
-test(run_evolution) :-
-   Taskname = "Learn String A",
-   run_evolution(Taskname, _, _,_, "stopcondition").
-
-test(run_evolution_stop) :-
-   Taskname = "Learn String A",
-   run_evolution(Taskname, "stringopt", _, [["Hello"], ["", ""]], "stopcondition").
 
 :- end_tests(genetic_programming).
