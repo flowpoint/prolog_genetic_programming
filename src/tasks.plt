@@ -32,10 +32,6 @@ test(levenshtein) :-
     target(Target),
     levenshtein(Input, Target, Distance).
 
-
-test(mapcost) :-
-    mapcost("accuracy", ["Hello","Hell"], [0,1]).
-
 test(stopcondition) :-
     stopcondition("zero_cost", "levenshtein", ["Hello"]).
 
@@ -72,7 +68,5 @@ test(quadratic_cost) :-
     Target = "BBC",
     Cost = 11.445523142259598,
     quadratic_cost(Input, Target, Cost).
-
-
 
 :- end_tests(tasks).

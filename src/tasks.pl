@@ -18,13 +18,16 @@
 % target_string("Hello world").
 target_string("Hello").
 
+%task("Learn String", "quadratic_cost", Initializer, "zero_cost") :-
+%    generate_population(10, 10, Population),
+%    Initializer = [Population],
+%    true.
+
 task(
     "Learn String", 
     "quadratic_cost",
     [[
     "Udo schwitzt am Popos",
-    "",
-    "",
     "",
     "",
     "",
@@ -70,10 +73,6 @@ levenshtein(Input, Target, Distance):-
     Distance is Olddistance+1,
     !.
 
-
-% additionally, maybe implement the other cost function from the python example
-
-
 %levenshtein(A,B, Cost).
 % per gene cost fn
 costfn("accuracy", Gene, Cost) :-
@@ -106,7 +105,7 @@ mapcost(Costfn, [H|T], [Cost|CT]):-
 
 stopcondition("zero_cost", Costfn, Epoch) :-
     mapcost(Costfn, Epoch, Costs),
-    (member(0, Costs); member(0.00, Costs)),
+    (member(0, Costs); member(0.00, Costs); member(0.0, Costs)),
     !.
 
 % Generate a list with random genes.
@@ -137,7 +136,7 @@ generate_random_code(Length, Gene) :-
 generate_random_code_helper(0, Gene, Gene).
 generate_random_code_helper(Length, Acc, Gene) :-
     Length > 0,
-    random_between(33, 126, Code),
+    random_between(65, 122, Code),
     char_code(Char, Code),
     atom_concat(Acc, Char, Acc1),
     Length1 is Length - 1,
