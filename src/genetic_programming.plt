@@ -22,7 +22,7 @@ test(run_evolution) :-
 
 test(run_evolution_stop) :-
    Taskname = "Learn String",
-   run_evolution(Taskname, "stringopt", _, [["Hello], ["", ""]], "stopcondition").
+   run_evolution(Taskname, "stringopt", _, [["Hello"], ["", ""]], "stopcondition").
 
 
 

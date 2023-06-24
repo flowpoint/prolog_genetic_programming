@@ -1,6 +1,7 @@
 :- module(tasks, [task/4, costfn/3, stopcondition/3, mapcost/3, levenshtein/3]).
 :- use_module(core).
 
+
 % task([TaskName, Costfn, Initializer, StopCondition]) :-
 %     % unique identifier to summarize the task
 %     TaskName = _,
@@ -18,7 +19,9 @@
 % target_string("Hello world").
 target_string("Hello").
 
-task(
+:- dynamic task/4.
+
+:- asserta(task(
     "Learn String", 
     "levenshtein",
     [[
@@ -35,7 +38,8 @@ task(
     ]],
     "zero_cost"
     ) :-
-        true.
+        true
+).
 
 tail(String, Head, Tail) :- 
     sub_string(String, 1, _, 0, Tail), 
