@@ -1,6 +1,9 @@
 :- module(tasks, [task/4, costfn/3, stopcondition/3, mapcost/3, levenshtein/3, quadratic_cost/3]).
 :- use_module(core).
 
+%-----------------------------------------------------------------------------------------------------------------------
+% Tasks Module
+
 % task([TaskName, Costfn, Initializer, StopCondition]) :-
 %     % unique identifier to summarize the task
 %     TaskName = _,
@@ -14,39 +17,72 @@
 %     Initializer = _,
 %     % the stopcondition defines when a task is achieved
 %     StopCondition = _.
-%
-% target_string("Hello world").
+
+%-----------------------------------------------------------------------------------------------------------------------
+% Target String
 target_string("Hello").
 
-%task("Learn String", "quadratic_cost", Initializer, "zero_cost") :-
-%    generate_population(10, 10, Population),
-%    Initializer = [Population],
-%    true.
+%-----------------------------------------------------------------------------------------------------------------------
+% Task 1: Learn a String with levenshtein distance
+task("Learn_String_with_levenshtein", "levenshtein",[["Levenshtein Go","","","","","","",""]],"zero_cost") :-
+    true.
 
-task(
-    "Learn String", 
-    "quadratic_cost",
-    [[
-    "Udo schwitzt am Popos",
-    "",
-    "",
-    "",
-    "",
-    "",
-    "",
-    ""
-    ]],
-    "zero_cost"
-    ) :-
-        true.
+%-----------------------------------------------------------------------------------------------------------------------
+% Task 2: Learn a String with quadratic cost
+task("Learn_String_with_quadratic", "quadratic_cost",[["Quadratic Go","","","","","","",""]],"zero_cost") :-
+    true.
 
+%-----------------------------------------------------------------------------------------------------------------------
+% Task 3: Learn a String with Generate Population
+task("Learn_String_with_Generate_Pop", "quadratic_cost", Initializer, "zero_cost") :-
+    generate_population(10, 10, Population),
+    Initializer = [Population],
+    true.
+
+%-----------------------------------------------------------------------------------------------------------------------
+% Cost Functions
+costfn("accuracy", Gene, Cost) :-
+    target_string(T),
+    (Cost = 0, Gene = T);
+    Cost = 1.
+
+costfn("levenshtein", Gene, Cost) :-
+    gene(Gene),
+    target_string(T),
+    levenshtein(Gene, T, Cost),
+    !.
+
+costfn("quadratic_cost", Gene, Cost) :-
+    gene(Gene),
+    target_string(T),
+    quadratic_cost(Gene, T, Cost),
+    !.
+
+%-----------------------------------------------------------------------------------------------------------------------
+% Stop Conditions
+stopcondition("zero_cost", Costfn, Epoch) :-
+    mapcost(Costfn, Epoch, Costs),
+    (member(0, Costs); member(0.00, Costs); member(0.0, Costs)),
+    !.
+
+%-----------------------------------------------------------------------------------------------------------------------
+% Map Cost
+mapcost(Costfn, [T], [CT]):-
+    costfn(Costfn, T, CT),
+    !.
+mapcost(Costfn, [H|T], [Cost|CT]):-
+    costfn(Costfn, H, Cost),
+    mapcost(Costfn, T, CT),
+    !.
+
+%-----------------------------------------------------------------------------------------------------------------------
+% Levenshtein Distance
 tail(String, Head, Tail) :- 
     sub_string(String, 1, _, 0, Tail), 
     sub_string(String, 0, 1, _, Head), 
     !.
 
 % maybe look here https://occasionallycogent.com/levenshtein_distance/index.html
-% levenshtein(Input, Target, Distance).
 levenshtein(Input, Target, Distance):-
     string_length(Input, 0),
     string_length(Target,Distance),
@@ -73,82 +109,12 @@ levenshtein(Input, Target, Distance):-
     Distance is Olddistance+1,
     !.
 
-%levenshtein(A,B, Cost).
-% per gene cost fn
-costfn("accuracy", Gene, Cost) :-
-    target_string(T),
-    (Cost = 0, Gene = T);
-    Cost = 1.
-
-costfn("levenshtein", Gene, Cost) :-
-    gene(Gene),
-    target_string(T),
-    levenshtein(Gene, T, Cost),
-    !.
-
-costfn("quadratic_cost", Gene, Cost) :-
-    gene(Gene),
-    target_string(T),
-    quadratic_cost(Gene, T, Cost),
-    !.
-
-% costfn("abs", Gene, Cost) :-
-%    atom_number(Gene, Cost).
-
-mapcost(Costfn, [T], [CT]):-
-    costfn(Costfn, T, CT),
-    !.
-mapcost(Costfn, [H|T], [Cost|CT]):-
-    costfn(Costfn, H, Cost),
-    mapcost(Costfn, T, CT),
-    !.
-
-stopcondition("zero_cost", Costfn, Epoch) :-
-    mapcost(Costfn, Epoch, Costs),
-    (member(0, Costs); member(0.00, Costs); member(0.0, Costs)),
-    !.
-
-% Generate a list with random genes.
-% Parameter: Size, Char_Limit, TargetList
-generate_population(Size, Char_Limit, Population) :-
-    generate_genes_list_helper(Size, Char_Limit, Population).
-
-
-generate_genes_list_helper(0, _, []).
-
-
-generate_genes_list_helper(Size, Char_Limit, [Gene | Rest]) :-
-    Size > 0,
-    generate_random_gene(Char_Limit, Gene),
-    Size1 is Size - 1,
-    generate_genes_list_helper(Size1, Char_Limit, Rest).
-
-
-generate_random_gene(Char_Limit, Gene) :-
-    random_between(1, Char_Limit, Length),
-    generate_random_code(Length, Gene).
-
-
-generate_random_code(Length, Gene) :-
-    generate_random_code_helper(Length, '', Gene).
-
-
-generate_random_code_helper(0, Gene, Gene).
-generate_random_code_helper(Length, Acc, Gene) :-
-    Length > 0,
-    random_between(65, 122, Code),
-    char_code(Char, Code),
-    atom_concat(Acc, Char, Acc1),
-    Length1 is Length - 1,
-    generate_random_code_helper(Length1, Acc1, Gene).
-
-
-% Rework in Progress
+%-----------------------------------------------------------------------------------------------------------------------
+% Quadratic Cost
 quadratic_cost(Input, Target, Cost) :-
     string_chars(Target, TargetChars),
     string_chars(Input, InputChars),
     calculate_cost_helper(InputChars, TargetChars, 0, Cost).
-
 
 % Base case: Input and Target is empty
 calculate_cost_helper([], [], Acc, Acc).
@@ -167,3 +133,33 @@ calculate_cost_helper([C1 | CodeRest], [T1 | TargetRest], Acc, Cost) :-
     Cost_tmp is sqrt(abs((ASCII2**2) - (ASCII1**2))),
     NewAcc is Acc + Cost_tmp,
     calculate_cost_helper(CodeRest, TargetRest, NewAcc, Cost).
+
+%-----------------------------------------------------------------------------------------------------------------------
+% Generate Population
+% Parameter: Size, Char_Limit, TargetList
+generate_population(Size, Char_Limit, Population) :-
+    generate_genes_list_helper(Size, Char_Limit, Population).
+
+generate_genes_list_helper(0, _, []).
+
+generate_genes_list_helper(Size, Char_Limit, [Gene | Rest]) :-
+    Size > 0,
+    generate_random_gene(Char_Limit, Gene),
+    Size1 is Size - 1,
+    generate_genes_list_helper(Size1, Char_Limit, Rest).
+
+generate_random_gene(Char_Limit, Gene) :-
+    random_between(1, Char_Limit, Length),
+    generate_random_code(Length, Gene).
+
+generate_random_code(Length, Gene) :-
+    generate_random_code_helper(Length, '', Gene).
+
+generate_random_code_helper(0, Gene, Gene).
+generate_random_code_helper(Length, Acc, Gene) :-
+    Length > 0,
+    random_between(65, 122, Code),
+    char_code(Char, Code),
+    atom_concat(Acc, Char, Acc1),
+    Length1 is Length - 1,
+    generate_random_code_helper(Length1, Acc1, Gene).

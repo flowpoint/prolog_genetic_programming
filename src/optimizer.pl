@@ -4,7 +4,15 @@
 :- use_module(core).
 :- use_module(tasks).
 
+%-----------------------------------------------------------------------------------------------------------------------
+% Optimizer module
+optimizer("stringopt", Selectionop, Crossoverop, Mutationop) :-
+    selection(Selectionop, _, _, _),
+    crossover(Crossoverop, _, _),
+    mutate(Mutationop, _, _).
 
+%-----------------------------------------------------------------------------------------------------------------------
+% Selection operators
 selection("top10", Costfn, [LastEpoch | Prev], [NewPopulation | [LastEpoch | Prev] ]) :-
     mapcost(Costfn, LastEpoch, Costs),
     pairs_keys_values(
@@ -16,6 +24,8 @@ selection("top10", Costfn, [LastEpoch | Prev], [NewPopulation | [LastEpoch | Pre
     pairs_values(NewPopulationKV, NewPopulation),
     !.
 
+%-----------------------------------------------------------------------------------------------------------------------
+% Crossover operators
 string_halves(S, Half1, Half2) :-
     string_length(S,Sl),
     Slh is Sl // 2,
@@ -44,16 +54,14 @@ crossover("headtail", EvolutionHistory, NewEvolutionHistory) :-
     append(Crossed_Epoch, LastEpoch, NewEpoch),
     !.
 
-% crossover("neighbors_splice", [LastEpoch | _], NewHistory) :-
-
+%-----------------------------------------------------------------------------------------------------------------------
+% Mutation operators
 split_list(Index, List, Split1, Split2) :-
     length(Split1, Index),
     append(Split1, Split2, List).
 
 split_string_pos(Index, String, Split1, Split2) :-
     string_chars(String, Chars),
-    %string_chars(Split1,S1),
-    %string_chars(Split2,s2),
     split_list(Index,Chars,Split1,Split2).
 
 charo(Char) :-
@@ -68,18 +76,7 @@ random_char(Char) :-
     "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ ",
     L),
     random_member(Char, L),
-    !
-    .
-% mutateGene(Gene, NewGene) :-
-%     string_length(Gene, L),
-%     random_between(0,L, I),
-%     select(Gene, 
-%
-% mutate_pos("insertion", Index, Gene, NewGene) :-
-%     split_string_pos(Index, Gene, Split1, Split2),
-%     random_char(N),
-%     append([Split1, [N], Split2], NewGene).
-%
+    !.
 
 mutate_pos("insertion", Index, Gene, NewGene) :-
     random_char(E),
@@ -104,11 +101,6 @@ mutate_pos("replacement", Index, Gene, NewGene) :-
     string_chars(MidGene, MidChars),
     string_chars(NewGene, NewChars),
     !.
-
-% mutatePos("insertion", Index, Gene, NewGene) :-
-%     split_list(Index, Gene, [Split1], Split2),
-%     random_char(N),
-%     NewGene = [ Split1 | [ N | Split2 ]].
 
 mutate_gene(Gene, NewGene) :-
     gene(Gene),
@@ -136,8 +128,3 @@ mutate("indel", EvolutionHistory, NewHistory) :-
     map_mutate_gene(LastEpoch, Mutated_epoch),
     append(Mutated_epoch, LastEpoch, NewEpoch),
     !.
-
-optimizer("stringopt", Selectionop, Crossoverop, Mutationop) :-
-    selection(Selectionop, _, _, _),
-    crossover(Crossoverop, _, _),
-    mutate(Mutationop, _, _).

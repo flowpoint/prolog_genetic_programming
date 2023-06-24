@@ -4,8 +4,14 @@
 :- use_module(tasks).
 :- use_module(core).
 
+%-----------------------------------------------------------------------------------------------------------------------
+% Genetic Programming Module
+genetic_programming(Taskname, Optimizername, EvolutionHistory) :-
+    run_evolution(Taskname, Optimizername, _, EvolutionHistory, "stopcondition"), 
+    !.
 
-
+%-----------------------------------------------------------------------------------------------------------------------
+% Run Evolution with Stop Condition
 run_evolution(
     Taskname,
     Optimizername,
@@ -14,8 +20,10 @@ run_evolution(
     "stopcondition"
     ):-
         EvolutionHistory = [L | _],
+        % Print Last Epoch
         writeln(L),
         (
+            % If Stop Condition is met, return the Evolution History
             (
                 task(Taskname, Costfn, [InitialEpoch], StopCondition),
                 EvolutionHistory = [LastEpoch | _],
@@ -23,6 +31,7 @@ run_evolution(
                 stopcondition(StopCondition, Costfn, LastEpoch),
                 !
             );
+            % Else, continue the evolution with Select
             (
             task(Taskname, Costfn, [InitialEpoch], StopCondition),
             (append(_, [InitialEpoch], EvolutionHistory), !),
@@ -36,6 +45,8 @@ run_evolution(
             )
         ).
 
+%-----------------------------------------------------------------------------------------------------------------------
+% Run Evolution with Select
 run_evolution(
     Taskname,
     Optimizername,
@@ -46,6 +57,7 @@ run_evolution(
         task(Taskname, Costfn, _, _),
         optimizer(Optimizername, Selectionop, _, _),
         selection(Selectionop, Costfn, EvolutionHistory, NewEvolutionHistory), 
+        % Run Evolution with Crossover
         run_evolution(
             Taskname,
             Optimizername,
@@ -54,6 +66,8 @@ run_evolution(
             "crossover"
             ).
 
+%-----------------------------------------------------------------------------------------------------------------------
+% Run Evolution with Crossover
 run_evolution(
     Taskname,
     Optimizername,
@@ -64,6 +78,7 @@ run_evolution(
         task(Taskname, Costfn, _, _),
         optimizer(Optimizername, Selectionop, Crossoverop, Mutationop),
         crossover(Crossoverop, EvolutionHistory, NewEvolutionHistory),
+        % Run Evolution with Mutate
         run_evolution(
             Taskname,
             Optimizername,
@@ -72,6 +87,8 @@ run_evolution(
             "mutate"
             ).
 
+%-----------------------------------------------------------------------------------------------------------------------
+% Run Evolution with Mutate
 run_evolution(
     Taskname,
     Optimizername,
@@ -82,6 +99,7 @@ run_evolution(
         task(Taskname, Costfn, _, _),
         optimizer(Optimizername, Selectionop, Crossoverop, Mutationop),
         mutate(Mutationop, EvolutionHistory, NewEvolutionHistory),
+        % Run Evolution with Stop Condition (Recursion)
         run_evolution(
             Taskname,
             Optimizername,
@@ -89,15 +107,3 @@ run_evolution(
             Result,
             "stopcondition"
             ).
-
-
-genetic_programming(Taskname, Optimizername, EvolutionHistory) :-
-    run_evolution(Taskname, Optimizername, _, EvolutionHistory, "stopcondition"), 
-    !.
-
-    
-run_example(Task):-
-    Taskname= Task,
-    Optimizername="stringopt",
-    genetic_programming(Taskname, Optimizername, X),
-    write(X).

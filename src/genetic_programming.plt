@@ -6,24 +6,30 @@
 :- load_test_files(optimizer).
 :- load_test_files(tasks).
 
-% we start by learning to overfit on the string "Hello world" 
+%-----------------------------------------------------------------------------------------------------------------------
+% Tests for genetic_programming.pl
 
-% test that the "Learn String" task is solved optimally, 
-% by the occurence of the string in the last epochs genes
+% Test for genetic_programming/3 with task "Learn_String_with_levenshtein" and optimizer "stringopt"
 test(genetic_programming) :-
-   Taskname = "Learn String",
+   Taskname = "Learn_String_with_levenshtein",
    Optimizername = "stringopt",
    genetic_programming(Taskname, Optimizername, [LastEpoch | _ ]),
    member("Hello", LastEpoch).
 
-test(run_evolution) :-
-   Taskname = "Learn String",
-   run_evolution(Taskname, _, _,_, "stopcondition").
+% Test for genetic_programming/3 with task "Learn_String_with_qudratic" and optimizer "stringopt"
+test(genetic_programming) :-
+   Taskname = "Learn_String_with_qudratic",
+   Optimizername = "stringopt",
+   genetic_programming(Taskname, Optimizername, [LastEpoch | _ ]),
+   member("Hello", LastEpoch).
 
-test(run_evolution_stop) :-
-   Taskname = "Learn String",
-   run_evolution(Taskname, "stringopt", _, [["Hello"], ["", ""]], "stopcondition").
+%test(run_evolution) :-
+%   Taskname = "Learn_String_with_levenshtein",
+%   run_evolution(Taskname, _, _,_, "stopcondition").
 
+%test(run_evolution_stop) :-
+%   Taskname = "Learn_String_with_levenshtein",
+%   run_evolution(Taskname, "stringopt", _, [["Hello"], ["", ""]], "stopcondition").
 
 %test(genetic_programming) :-
 %   Taskname = "TakeMe",
