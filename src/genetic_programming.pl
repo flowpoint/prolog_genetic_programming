@@ -1,17 +1,31 @@
+/** <module> Genetic Programming Module
+Genetic Programming: Run Evolution with stop condition, selection, crossover, and mutation.
+@author flowpoint,shinpanse
+@license GPL-3.0
+*/
 :- module(genetic_programming, [genetic_programming/3, selection/4, run_evolution/5]).
 :- use_module(library(dialect/xsb/source)).
 :- use_module(optimizer).
 :- use_module(tasks).
 :- use_module(core).
 
-%-----------------------------------------------------------------------------------------------------------------------
-% Genetic Programming Module
+/** Genetic Programming Main Function
+ * @param Taskname Name of the Task
+ * @param Optimizername Name of the Optimizer
+ * @param EvolutionHistory Evolution History
+ * @return Result Result of the Evolution
+*/ 
 genetic_programming(Taskname, Optimizername, EvolutionHistory) :-
     run_evolution(Taskname, Optimizername, _, EvolutionHistory, "stopcondition"), 
     !.
 
-%-----------------------------------------------------------------------------------------------------------------------
-% Run Evolution with Stop Condition
+/** Run Evolution of one Epoch
+ * @param Taskname Name of the Task
+ * @param Optimizername Name of the Optimizer
+ * @param EvolutionHistory Evolution History
+ * @param Result Result of the Evolution
+ * @return Result of the Evolution, when Stop Condition is met run Evolution with Select.
+*/
 run_evolution(
     Taskname,
     Optimizername,
@@ -45,8 +59,13 @@ run_evolution(
             )
         ).
 
-%-----------------------------------------------------------------------------------------------------------------------
-% Run Evolution with Select
+/** Run Evolution with Select
+ * @param Taskname Name of the Task
+ * @param Optimizername Name of the Optimizer
+ * @param EvolutionHistory Evolution History
+ * @param Result Result of the Evolution
+ * @return Run Evolution with Crossover
+*/
 run_evolution(
     Taskname,
     Optimizername,
@@ -66,8 +85,13 @@ run_evolution(
             "crossover"
             ).
 
-%-----------------------------------------------------------------------------------------------------------------------
-% Run Evolution with Crossover
+/** Run Evolution with Crossover
+ * @param Taskname Name of the Task
+ * @param Optimizername Name of the Optimizer
+ * @param EvolutionHistory Evolution History
+ * @param Result Result of the Evolution
+ * @return Run Evolution with Mutate
+*/
 run_evolution(
     Taskname,
     Optimizername,
@@ -87,8 +111,15 @@ run_evolution(
             "mutate"
             ).
 
-%-----------------------------------------------------------------------------------------------------------------------
-% Run Evolution with Mutate
+
+/** Run Evolution with Mutate
+ * @param Taskname Name of the Task
+ * @param Optimizername Name of the Optimizer
+ * @param EvolutionHistory Evolution History
+ * @param Result Result of the Evolution
+ * @return Run Evolution with Stop Condition
+ * @note This is the last step of the Evolution
+*/
 run_evolution(
     Taskname,
     Optimizername,

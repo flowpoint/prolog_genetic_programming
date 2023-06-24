@@ -1,18 +1,28 @@
+/** <module> Optimizer module
+This module contains the optimizer module, which is responsible for the optimization of the population.
+@author flowpoint,shinpanse
+@license GPL-3.0
+*/
 :- module(optimizer, [optimizer/4, selection/4, crossover/3, mutate/3, crossover/3, cross/4, cross2/2, split_list/4, mutate_pos/4, split_string_pos/4]).
-
 :- use_module(library(pairs)).
 :- use_module(core).
 :- use_module(tasks).
 
-%-----------------------------------------------------------------------------------------------------------------------
-% Optimizer module
+/** Main optimizer predicate
+ * @param Unique Identifier of the optimizer
+*/
 optimizer("stringopt", Selectionop, Crossoverop, Mutationop) :-
     selection(Selectionop, _, _, _),
     crossover(Crossoverop, _, _),
     mutate(Mutationop, _, _).
 
-%-----------------------------------------------------------------------------------------------------------------------
-% Selection operators
+/** Selection operator 
+ * Sorts the population based on the cost function and selects the top 10
+ * @param Unique Identifier of the selection operator
+ * @param Cost function
+ * @param Evolution history
+ * @param New evolution history
+*/
 selection("top10", Costfn, [LastEpoch | Prev], [NewPopulation | [LastEpoch | Prev] ]) :-
     mapcost(Costfn, LastEpoch, Costs),
     pairs_keys_values(
@@ -24,8 +34,9 @@ selection("top10", Costfn, [LastEpoch | Prev], [NewPopulation | [LastEpoch | Pre
     pairs_values(NewPopulationKV, NewPopulation),
     !.
 
-%-----------------------------------------------------------------------------------------------------------------------
-% Crossover operators
+/** Crossover operator
+ * Splits the string in half and swaps the halves between two strings
+*/
 string_halves(S, Half1, Half2) :-
     string_length(S,Sl),
     Slh is Sl // 2,
@@ -54,8 +65,9 @@ crossover("headtail", EvolutionHistory, NewEvolutionHistory) :-
     append(Crossed_Epoch, LastEpoch, NewEpoch),
     !.
 
-%-----------------------------------------------------------------------------------------------------------------------
-% Mutation operators
+/** Mutation operator
+ * Mutates the string by inserting, deleting or replacing a character
+*/
 split_list(Index, List, Split1, Split2) :-
     length(Split1, Index),
     append(Split1, Split2, List).

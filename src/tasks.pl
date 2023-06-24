@@ -1,46 +1,35 @@
+/** <module> Tasks Module
+This module contains the tasks to be solved by the optimizers.
+This module also contains the cost functions and stop conditions for the optimizers.
+@author flowpoint,shinpanse
+@license GPL-3.0
+*/
 :- module(tasks, [task/4, costfn/3, stopcondition/3, mapcost/3, levenshtein/3, quadratic_cost/3]).
 :- use_module(core).
 
-%-----------------------------------------------------------------------------------------------------------------------
-% Tasks Module
-
-% task([TaskName, Costfn, Initializer, StopCondition]) :-
-%     % unique identifier to summarize the task
-%     TaskName = _,
-%     % cost function describes what the tasks goal is
-%     % by assigning a cost value to the "solutions"
-%     Costfn = _,
-%     % initializer describes the initial state the task should be started from
-%     % this is part of the task, so the optimizers can be agnostic to the tasks
-%     % additionally the task definition might contain realistically an inital 
-%     % state to be started from
-%     Initializer = _,
-%     % the stopcondition defines when a task is achieved
-%     StopCondition = _.
-
-%-----------------------------------------------------------------------------------------------------------------------
 % Target String
 target_string("Hello").
 
-%-----------------------------------------------------------------------------------------------------------------------
 % Task 1: Learn a String with levenshtein distance
-task("Learn_String_with_levenshtein", "levenshtein",[["Levenshtein Go","","","","","","",""]],"zero_cost") :-
+task("Learn_String_with_levenshtein", "levenshtein",[["Levenshtein Go","Es ist warm","Eis am Stiel","","","","",""]],"zero_cost") :-
     true.
 
-%-----------------------------------------------------------------------------------------------------------------------
 % Task 2: Learn a String with quadratic cost
-task("Learn_String_with_quadratic", "quadratic_cost",[["Quadratic Go","","","","","","",""]],"zero_cost") :-
+task("Learn_String_with_quadratic", "quadratic_cost",[["Quadratic Go","Sommerfest","Polizei auf Segway","","","","",""]],"zero_cost") :-
     true.
 
-%-----------------------------------------------------------------------------------------------------------------------
 % Task 3: Learn a String with Generate Population
 task("Learn_String_with_Generate_Pop", "quadratic_cost", Initializer, "zero_cost") :-
-    generate_population(10, 10, Population),
+    generate_random_string_list(8,10,Population),
     Initializer = [Population],
     true.
 
-%-----------------------------------------------------------------------------------------------------------------------
-% Cost Functions
+
+/** Cost Functions
+ * @param Unique identifier of the cost function
+ * @param Gene The gene to be evaluated
+ * @return Cost The cost of the gene
+*/
 costfn("accuracy", Gene, Cost) :-
     target_string(T),
     (Cost = 0, Gene = T);
@@ -58,15 +47,23 @@ costfn("quadratic_cost", Gene, Cost) :-
     quadratic_cost(Gene, T, Cost),
     !.
 
-%-----------------------------------------------------------------------------------------------------------------------
-% Stop Conditions
+/** Stop Conditions
+ * Stops the optimization process if the cost of the gene is 0
+ * @param Unique identifier of the stop condition
+ * @param Costfn The cost function to be used
+ * @param Epoch The current epoch
+*/
 stopcondition("zero_cost", Costfn, Epoch) :-
     mapcost(Costfn, Epoch, Costs),
-    (member(0, Costs); member(0.00, Costs); member(0.0, Costs)),
+    (member(0, Costs); member(0.00, Costs)),
     !.
 
-%-----------------------------------------------------------------------------------------------------------------------
-% Map Cost
+/** Map Cost
+ * Maps the cost function to a list of genes
+ * @param Costfn The cost function to be used
+ * @param Genes The list of genes to be evaluated
+ * @return Costs The list of costs
+*/
 mapcost(Costfn, [T], [CT]):-
     costfn(Costfn, T, CT),
     !.
@@ -75,8 +72,12 @@ mapcost(Costfn, [H|T], [Cost|CT]):-
     mapcost(Costfn, T, CT),
     !.
 
-%-----------------------------------------------------------------------------------------------------------------------
-% Levenshtein Distance
+/** Levenshtein Distance
+ * Calculates the levenshtein distance between two strings
+ * @param Input The input string
+ * @param Target The target string
+ * @return Distance The levenshtein distance between the input and the target string
+*/
 tail(String, Head, Tail) :- 
     sub_string(String, 1, _, 0, Tail), 
     sub_string(String, 0, 1, _, Head), 
@@ -109,8 +110,12 @@ levenshtein(Input, Target, Distance):-
     Distance is Olddistance+1,
     !.
 
-%-----------------------------------------------------------------------------------------------------------------------
-% Quadratic Cost
+/** Quadratic Cost
+ * Calculates the quadratic cost between two strings
+ * @param Input The input string
+ * @param Target The target string
+ * @return Cost The quadratic cost between the input and the target string
+*/
 quadratic_cost(Input, Target, Cost) :-
     string_chars(Target, TargetChars),
     string_chars(Input, InputChars),
@@ -134,9 +139,12 @@ calculate_cost_helper([C1 | CodeRest], [T1 | TargetRest], Acc, Cost) :-
     NewAcc is Acc + Cost_tmp,
     calculate_cost_helper(CodeRest, TargetRest, NewAcc, Cost).
 
-%-----------------------------------------------------------------------------------------------------------------------
-% Generate Population
-% Parameter: Size, Char_Limit, TargetList
+/** Generate Random String List
+ * Generates a list of random strings
+ * @param Size The size of the list
+ * @param Char_Limit The maximum length of the strings
+ * @return The list of random strings as Population
+*/
 generate_population(Size, Char_Limit, Population) :-
     generate_genes_list_helper(Size, Char_Limit, Population).
 
@@ -158,7 +166,7 @@ generate_random_code(Length, Gene) :-
 generate_random_code_helper(0, Gene, Gene).
 generate_random_code_helper(Length, Acc, Gene) :-
     Length > 0,
-    random_between(65, 122, Code),
+    random_between(65, 90, Code),
     char_code(Char, Code),
     atom_concat(Acc, Char, Acc1),
     Length1 is Length - 1,

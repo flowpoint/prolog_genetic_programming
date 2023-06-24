@@ -1,7 +1,9 @@
+/** <module> Core Module
+Core Structure of the Genetic Programming System
+@author flowpoint,shinpanse
+@license GPL-3.0
+*/
 :- module(core, [gene/1, population/1, epoch/2, evolutionhistory/1, take/3]).
-
-%-----------------------------------------------------------------------------------------------------------------------
-% Core Module
 
 % Gene is a string
 gene(X) :- string(X).

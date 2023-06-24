@@ -1,12 +1,15 @@
+/** <module> Tasks Test Module
+Tetst for tasks.pl
+@author flowpoint,shinpanse
+@license GPL-3.0
+*/
 :- begin_tests(tasks).
 :- use_module(core).
 :- use_module(tasks).
 
-%-----------------------------------------------------------------------------------------------------------------------
-% Tests for the tasks module
+% Target String for the tests
 target("Hello world").
 
-%-----------------------------------------------------------------------------------------------------------------------
 % Test the levenshtein distance
 % Test: Input and Target are the same -> Distance = 0
 test(levenshtein_1) :-
@@ -33,12 +36,10 @@ test(levenshtein_4) :-
     target(Target),
     levenshtein(Input, Target, Distance).
 
-%-----------------------------------------------------------------------------------------------------------------------
 % Test the stopcondition
 test(stopcondition) :-
     stopcondition("zero_cost", "levenshtein", ["Hello"]).
 
-%-----------------------------------------------------------------------------------------------------------------------
 % Test quadratic cost function
 % Test: Input and Target are the same -> Cost = 0
 test(quadratic_cost_1) :-

@@ -1,14 +1,13 @@
+/** <module> Optimizer Test Module
+Tetst for optimizer.pl
+@author flowpoint,shinpanse
+@license GPL-3.0
+*/
 :- begin_tests(optimizer).
 :- use_module(genetic_programming).
 :- use_module(core).
 :- use_module(tasks).
 :- use_module(optimizer).
-
-%-----------------------------------------------------------------------------------------------------------------------
-% Tests for the optimizer
-
-%-----------------------------------------------------------------------------------------------------------------------
-% Tests for the selection function
 
 % Levenshtein Sort: Hello -> 2 -> 3
 test(selection_1) :-
@@ -30,9 +29,6 @@ test(selection_4) :-
 test(selection_5) :-
     selection("top10", "quadratic_cost", [["1", "2","3"]], X),
     X = [["3","2","1"],["1","2","3"]].
-
-%-----------------------------------------------------------------------------------------------------------------------
-% Tests for the crossover function
 
 % Crossover: headtail -> ANNE, OTTO -> ANTO, OTNE, ANNE, OTTO
 test(crossover) :-
