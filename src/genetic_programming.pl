@@ -9,6 +9,12 @@ Genetic Programming: Run Evolution with stop condition, selection, crossover, an
 :- use_module(tasks).
 :- use_module(core).
 
+:- multifile prolog:message//1.
+
+prolog:message(genetic(A)) -->
+    {},
+    ['Genes: ~w'-[A]].
+
 /** Genetic Programming Main Function
  * @param Taskname Name of the Task
  * @param Optimizername Name of the Optimizer
@@ -35,7 +41,7 @@ run_evolution(
     ):-
         EvolutionHistory = [L | _],
         % Print Last Epoch
-        writeln(L),
+        print_message(informational, genetic(L)),
         (
             % If Stop Condition is met, return the Evolution History
             (

@@ -7,6 +7,7 @@ This module also contains the cost functions and stop conditions for the optimiz
 :- module(tasks, [task/4, costfn/3, stopcondition/3, mapcost/3, levenshtein/3, quadratic_cost/3]).
 :- use_module(core).
 
+
 % Target String
 target_string("Hello").
 
