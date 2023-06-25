@@ -17,11 +17,13 @@ test(genetic_programming) :-
    Taskname = "Learn_String_with_levenshtein",
    Optimizername = "stringopt",
    genetic_programming(Taskname, Optimizername, [LastEpoch | _ ]),
-   member("Hello", LastEpoch).
+   member("Hello", LastEpoch),
+   !.
 
 test(run_evolution) :-
    Taskname = "Learn_String_with_levenshtein",
-   run_evolution(Taskname, _, _,_, "stopcondition").
+   run_evolution(Taskname, "stringopt", _,_, "stopcondition"),
+   !.
 
 test(run_evolution_stop) :-
    Taskname = "Learn_String_with_levenshtein",
@@ -32,11 +34,13 @@ test(genetic_programming) :-
    Taskname = "Learn_String_with_quadratic",
    Optimizername = "stringopt",
    genetic_programming(Taskname, Optimizername, [LastEpoch | _ ]),
-   member("Hello", LastEpoch).
+   member("Hello", LastEpoch),
+   !.
 
 test(run_evolution) :-
    Taskname = "Learn_String_with_quadratic",
-   run_evolution(Taskname, _, _,_, "stopcondition").
+   run_evolution(Taskname, "stringopt", _,_, "stopcondition"),
+   !.
 
 test(run_evolution_stop) :-
    Taskname = "Learn_String_with_quadratic",

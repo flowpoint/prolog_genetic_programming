@@ -59,7 +59,7 @@ cross2(Genes, NewGenes) :-
    cross2(R,NR).
 
 crossover("headtail", EvolutionHistory, NewEvolutionHistory) :-
-    EvolutionHistory = [LastEpoch | R],
+    EvolutionHistory = [LastEpoch | _],
     NewEvolutionHistory = [NewEpoch | EvolutionHistory],
     cross2(LastEpoch, Crossed_Epoch),
     append(Crossed_Epoch, LastEpoch, NewEpoch),

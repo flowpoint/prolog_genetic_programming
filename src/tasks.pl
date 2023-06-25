@@ -6,6 +6,7 @@ This module also contains the cost functions and stop conditions for the optimiz
 */
 :- module(tasks, [task/4, costfn/3, stopcondition/3, mapcost/3, levenshtein/3, quadratic_cost/3]).
 :- use_module(core).
+:- use_module(core).
 
 
 % Target String
@@ -21,7 +22,7 @@ task("Learn_String_with_quadratic", "quadratic_cost",[["Quadratic Go","Sommerfes
 
 % Task 3: Learn a String with Generate Population
 task("Learn_String_with_Generate_Pop", "quadratic_cost", Initializer, "zero_cost") :-
-    generate_random_string_list(8,10,Population),
+    generate_population(8,10,Population),
     Initializer = [Population],
     true.
 
@@ -31,16 +32,20 @@ task("Learn_String_with_Generate_Pop", "quadratic_cost", Initializer, "zero_cost
  * @param Gene The gene to be evaluated
  * @return Cost The cost of the gene
 */
+:- table costfn/3.
+
 costfn("accuracy", Gene, Cost) :-
     target_string(T),
     (Cost = 0, Gene = T);
     Cost = 1.
+
 
 costfn("levenshtein", Gene, Cost) :-
     gene(Gene),
     target_string(T),
     levenshtein(Gene, T, Cost),
     !.
+
 
 costfn("quadratic_cost", Gene, Cost) :-
     gene(Gene),
@@ -84,6 +89,8 @@ tail(String, Head, Tail) :-
     sub_string(String, 0, 1, _, Head), 
     !.
 
+:- table levenshtein/3.
+
 % maybe look here https://occasionallycogent.com/levenshtein_distance/index.html
 levenshtein(Input, Target, Distance):-
     string_length(Input, 0),
@@ -117,10 +124,12 @@ levenshtein(Input, Target, Distance):-
  * @param Target The target string
  * @return Cost The quadratic cost between the input and the target string
 */
+:- table quadratic_cost/3.
 quadratic_cost(Input, Target, Cost) :-
     string_chars(Target, TargetChars),
     string_chars(Input, InputChars),
-    calculate_cost_helper(InputChars, TargetChars, 0, Cost).
+    calculate_cost_helper(InputChars, TargetChars, 0, Cost),
+    !.
 
 % Base case: Input and Target is empty
 calculate_cost_helper([], [], Acc, Acc).

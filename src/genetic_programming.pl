@@ -11,9 +11,9 @@ Genetic Programming: Run Evolution with stop condition, selection, crossover, an
 
 :- multifile prolog:message//1.
 
-prolog:message(genetic(A)) -->
+prolog:message(log_genes(Genes)) -->
     {},
-    ['Genes: ~w'-[A]].
+    ['Genes: ~w'-[Genes]].
 
 /** Genetic Programming Main Function
  * @param Taskname Name of the Task
@@ -41,11 +41,11 @@ run_evolution(
     ):-
         EvolutionHistory = [L | _],
         % Print Last Epoch
-        print_message(informational, genetic(L)),
+        print_message(informational, log_genes(L)),
         (
             % If Stop Condition is met, return the Evolution History
             (
-                task(Taskname, Costfn, [InitialEpoch], StopCondition),
+                task(Taskname, Costfn, _, StopCondition),
                 EvolutionHistory = [LastEpoch | _],
                 Result = EvolutionHistory,
                 stopcondition(StopCondition, Costfn, LastEpoch),
@@ -53,7 +53,7 @@ run_evolution(
             );
             % Else, continue the evolution with Select
             (
-            task(Taskname, Costfn, [InitialEpoch], StopCondition),
+            task(Taskname, _, [InitialEpoch], _),
             (append(_, [InitialEpoch], EvolutionHistory), !),
             run_evolution(
                 Taskname,
@@ -105,8 +105,8 @@ run_evolution(
     Result,
     "crossover"
     ):-
-        task(Taskname, Costfn, _, _),
-        optimizer(Optimizername, Selectionop, Crossoverop, Mutationop),
+        task(Taskname, _, _, _),
+        optimizer(Optimizername, _, Crossoverop, _),
         crossover(Crossoverop, EvolutionHistory, NewEvolutionHistory),
         % Run Evolution with Mutate
         run_evolution(
@@ -133,8 +133,8 @@ run_evolution(
     Result,
     "mutate"
     ):-
-        task(Taskname, Costfn, _, _),
-        optimizer(Optimizername, Selectionop, Crossoverop, Mutationop),
+        task(Taskname, _, _, _),
+        optimizer(Optimizername, _, _, Mutationop),
         mutate(Mutationop, EvolutionHistory, NewEvolutionHistory),
         % Run Evolution with Stop Condition (Recursion)
         run_evolution(
