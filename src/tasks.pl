@@ -8,23 +8,32 @@ This module also contains the cost functions and stop conditions for the optimiz
 :- use_module(core).
 :- use_module(core).
 
+:- dynamic task/4.
 
 % Target String
 target_string("Hello").
 
 % Task 1: Learn a String with levenshtein distance
+:- asserta(
 task("Learn_String_with_levenshtein", "levenshtein",[["Levenshtein Go","Es ist warm","Eis am Stiel","","","","",""]],"zero_cost") :-
-    true.
+    true
+).
 
 % Task 2: Learn a String with quadratic cost
+:- asserta(
 task("Learn_String_with_quadratic", "quadratic_cost",[["Quadratic Go","Sommerfest","Polizei auf Segway","","","","",""]],"zero_cost") :-
-    true.
+    true
+).
 
 % Task 3: Learn a String with Generate Population
+:- asserta(
+(
 task("Learn_String_with_Generate_Pop", "quadratic_cost", Initializer, "zero_cost") :-
     generate_population(8,10,Population),
     Initializer = [Population],
-    true.
+    true
+)
+).
 
 
 /** Cost Functions
@@ -34,24 +43,36 @@ task("Learn_String_with_Generate_Pop", "quadratic_cost", Initializer, "zero_cost
 */
 :- table costfn/3.
 
+:- dynamic costfn/3.
+
+:- asserta(
+(
 costfn("accuracy", Gene, Cost) :-
     target_string(T),
     (Cost = 0, Gene = T);
-    Cost = 1.
+    Cost = 1
+)
+).
 
-
+:- asserta(
+(
 costfn("levenshtein", Gene, Cost) :-
     gene(Gene),
     target_string(T),
     levenshtein(Gene, T, Cost),
-    !.
+    !
+)
+).
 
-
+:- asserta(
+(
 costfn("quadratic_cost", Gene, Cost) :-
     gene(Gene),
     target_string(T),
     quadratic_cost(Gene, T, Cost),
-    !.
+    !
+)
+).
 
 /** Stop Conditions
  * Stops the optimization process if the cost of the gene is 0
@@ -59,10 +80,15 @@ costfn("quadratic_cost", Gene, Cost) :-
  * @param Costfn The cost function to be used
  * @param Epoch The current epoch
 */
+:- dynamic stopcondition/3.
+:- asserta(
+(
 stopcondition("zero_cost", Costfn, Epoch) :-
     mapcost(Costfn, Epoch, Costs),
     (member(0, Costs); member(0.00, Costs)),
-    !.
+    !
+)
+).
 
 /** Map Cost
  * Maps the cost function to a list of genes

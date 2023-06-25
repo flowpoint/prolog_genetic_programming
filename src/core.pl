@@ -6,7 +6,11 @@ Core Structure of the Genetic Programming System
 :- module(core, [gene/1, population/1, epoch/2, evolutionhistory/1, take/3]).
 
 % Gene is a string
-gene(X) :- string(X).
+:- dynamic gene/1.
+
+:- asserta(
+gene(X) :- string(X)
+).
 
 % Population is a list of genes
 population(X) :- 

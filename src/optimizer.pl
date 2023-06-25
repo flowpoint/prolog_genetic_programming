@@ -11,10 +11,16 @@ This module contains the optimizer module, which is responsible for the optimiza
 /** Main optimizer predicate
  * @param Unique Identifier of the optimizer
 */
+:- dynamic optimizer/4.
+
+:- asserta(
+(
 optimizer("stringopt", Selectionop, Crossoverop, Mutationop) :-
     selection(Selectionop, _, _, _),
     crossover(Crossoverop, _, _),
-    mutate(Mutationop, _, _).
+    mutate(Mutationop, _, _)
+)
+).
 
 /** Selection operator 
  * Sorts the population based on the cost function and selects the top 10
@@ -23,6 +29,10 @@ optimizer("stringopt", Selectionop, Crossoverop, Mutationop) :-
  * @param Evolution history
  * @param New evolution history
 */
+:- dynamic selection/4.
+
+:- asserta(
+(
 selection("top10", Costfn, [LastEpoch | Prev], [NewPopulation | [LastEpoch | Prev] ]) :-
     mapcost(Costfn, LastEpoch, Costs),
     pairs_keys_values(
@@ -32,7 +42,9 @@ selection("top10", Costfn, [LastEpoch | Prev], [NewPopulation | [LastEpoch | Pre
     keysort(Pairs, Sorted),
     take(10, Sorted, NewPopulationKV),
     pairs_values(NewPopulationKV, NewPopulation),
-    !.
+    !
+)
+).
 
 /** Crossover operator
  * Splits the string in half and swaps the halves between two strings
@@ -58,12 +70,18 @@ cross2(Genes, NewGenes) :-
    cross(GeneA,GeneB, GeneNA, GeneNB),
    cross2(R,NR).
 
+:- dynamic crossover/3.
+
+:- asserta(
+(
 crossover("headtail", EvolutionHistory, NewEvolutionHistory) :-
     EvolutionHistory = [LastEpoch | _],
     NewEvolutionHistory = [NewEpoch | EvolutionHistory],
     cross2(LastEpoch, Crossed_Epoch),
     append(Crossed_Epoch, LastEpoch, NewEpoch),
-    !.
+    !
+)
+).
 
 /** Mutation operator
  * Mutates the string by inserting, deleting or replacing a character
@@ -78,14 +96,14 @@ split_string_pos(Index, String, Split1, Split2) :-
 
 charo(Char) :-
     string_chars(
-    "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ ",
+    "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ 1234567890",
     L),
     string_chars(Char,C),
     member(C, L).
 
 random_char(Char) :-
     string_chars(
-    "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ ",
+    "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ 1234567890",
     L),
     random_member(Char, L),
     !.
@@ -134,9 +152,15 @@ map_mutate_gene([G | R], [NewG | NR]):-
     mutate_gene(G, NewG),
     map_mutate_gene(R,NR).
 
+:- dynamic crossover/3.
+
+:- asserta(
+(
 mutate("indel", EvolutionHistory, NewHistory) :-
     EvolutionHistory = [LastEpoch | _],
     NewHistory = [ NewEpoch | EvolutionHistory],
     map_mutate_gene(LastEpoch, Mutated_epoch),
     append(Mutated_epoch, LastEpoch, NewEpoch),
-    !.
+    !
+)
+).
