@@ -16,7 +16,7 @@ tests(X) :-
 
 main(Argv) :- 
     echo(Argv),
-    genetic_programming:run_example("Learn String"),
+    genetic_programming:run_example(Argv),
     halt.
 
 
