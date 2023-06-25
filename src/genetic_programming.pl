@@ -15,6 +15,10 @@ prolog:message(log_genes(Genes)) -->
     {},
     ['Genes: ~w'-[Genes]].
 
+prolog:message(log_final_genes(Genes)) -->
+    {},
+    ['The Final Genes: ~w'-[Genes]].
+
 /** Genetic Programming Main Function
  * @param Taskname Name of the Task
  * @param Optimizername Name of the Optimizer
@@ -23,6 +27,8 @@ prolog:message(log_genes(Genes)) -->
 */ 
 genetic_programming(Taskname, Optimizername, EvolutionHistory) :-
     run_evolution(Taskname, Optimizername, _, EvolutionHistory, "stopcondition"), 
+    EvolutionHistory = [Fg | _],
+    print_message(informational, log_final_genes(Fg)),
     !.
 
 /** Run Evolution of one Epoch
