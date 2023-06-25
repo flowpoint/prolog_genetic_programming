@@ -1,22 +1,18 @@
 :- initialization(main,main).
 :- use_module(src/genetic_programming).
 
+%opt_type(Flag, Opt, Type) :-
 
-echo([]):- nl.
 
-echo([Last]):- !,
-    write(Last), nl.
-
-echo([H|T]) :-
-    write(H), write(' '),
-    echo(T).
-
-tests(X) :-
-    echo(X).
+run_task(Argv) :-
+    Argv = [ Taskname | [Optimizername]],
+    atom_string(Taskname, Tn),
+    atom_string(Optimizername, On),
+    genetic_programming:genetic_programming(Tn, On, _),
+    write("1").
 
 main(Argv) :- 
-    echo(Argv),
-    genetic_programming:run_example(Argv),
+    run_task(Argv),
     halt.
 
 
