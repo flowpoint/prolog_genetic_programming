@@ -11,7 +11,23 @@ target_fun(X, Y) :-
 :- asserta(
 (
 tasks:task("Learn_polynomial_function", "distance_from_fun", Initializer, "zero_cost") :-
-    Initializer = [["pred_fun(X,Y) :- Y is X."]],
+    Initializer = [[
+    "pred_fun(X,Y) :- Y is X.",
+    "pred_fun(X,Y) :- Y is X.",
+    "pred_fun(X,Y) :- Y is X.",
+    "pred_fun(X,Y) :- Y is X.",
+    "pred_fun(X,Y) :- Y is X.",
+    "pred_fun(X,Y) :- Y is X.",
+    "pred_fun(X,Y) :- Y is X.",
+    "pred_fun(X,Y) :- Y is X.",
+    "pred_fun(X,Y) :- Y is X.",
+    "pred_fun(X,Y) :- Y is X.",
+    "pred_fun(X,Y) :- Y is X.",
+    "pred_fun(X,Y) :- Y is X.",
+    "pred_fun(X,Y) :- Y is X.",
+    "pred_fun(X,Y) :- Y is X.",
+    "pred_fun(X,Y) :- Y is X."
+    ]],
     true
 )
 ).
@@ -19,6 +35,7 @@ tasks:task("Learn_polynomial_function", "distance_from_fun", Initializer, "zero_
 
 :- dynamic pred_fun/2.
 
+% run term body
 evalu(Str, Inp, Res) :-
     term_string(T, Str),
     retractall(pred_fun),
@@ -26,31 +43,42 @@ evalu(Str, Inp, Res) :-
     apply(pred_fun, [Inp, Res]),
     !.
 
+% ensure the term head is correct
 evalua(Str, Inp, Res) :-
     string_concat("pred_fun(X,Y) :- Y is", _, Str),evalu(Str, Inp, Res);
     Res=200.0.
 
-
+% catch incorrect terms, but assume the term head is correct
 eval_catch(Gene, Inp, Pred) :-
     catch(evalua(Gene, Inp, P), Error, P=100.0),
     Pred = P,
     !.
 
-% eval_catch("pred_fun(A,B):- B is A+1., 1, P).
+% add a new cost function
 :- retractall(tasks:costfn).
 :- asserta(
 (
 tasks:costfn("distance_from_fun", Gene, Cost) :- 
-    %random(0.0, 100.0, Input),
-    Input=1.0,
-    %number_string(Input, Gene),
+    random(0.0, 10.0, Input),
     target_fun(Input, Res),
     eval_catch(Gene, Input, Pred),
     Cost is abs(Res-Pred)
 )
 ).
 
+% change the gene base symbols
+:- retractall(optimizer:symbols).
+:- asserta(
+(
+symbols(L) :-
+    string_chars(
+    %"pred_fun()X,Y:-is *+0123456789.",
+    "X *+0123456789.",
+    L)
+)
+).
 
+% example of a overridden optimizer configuration
 :- asserta(
 (
 optimizer:optimizer("termopt", Selectionop, Crossoverop, Mutationop) :-
@@ -64,6 +92,19 @@ optimizer:optimizer("termopt", Selectionop, Crossoverop, Mutationop) :-
 )
 ).
 
+% only mutate the latter part of the term
+:- retractall(optimizer:mutate_gene).
+:- asserta(
+(
+mutate_gene(Gene, NewGene) :-
+    gene(Gene),
+    string_length(Gene, L),
+    K is L-1,
+    random_between(22, K, Index),
+    random_member(Indel, ["insertion","deletion","replacement"]),
+    mutate_pos(Indel, Index, Gene, NewGene),
+    !
+)
+).
 
-%:- genetic_programming:genetic_programming("Learn_polynomial_function", "stringopt", B).
 :- genetic_programming:genetic_programming("Learn_polynomial_function", "termopt", B).

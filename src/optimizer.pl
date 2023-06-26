@@ -113,17 +113,24 @@ split_string_pos(Index, String, Split1, Split2) :-
     string_chars(String, Chars),
     split_list(Index,Chars,Split1,Split2).
 
-charo(Char) :-
+:- dynamic symbols/1.
+
+:- asserta(
+(
+symbols(L) :-
     string_chars(
     "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ 1234567890",
-    L),
+    L)
+)
+).
+
+charo(Char) :-
+    symbols(L),
     string_chars(Char,C),
     member(C, L).
 
 random_char(Char) :-
-    string_chars(
-    "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ 1234567890",
-    L),
+    symbols(L),
     random_member(Char, L),
     !.
 
@@ -157,6 +164,10 @@ mutate_gene(Gene, NewGene) :-
     mutate_pos("insertion", 0, Gene, NewGene),
     !.
 
+:- dynamic mutate_gene/2.
+
+:- asserta(
+(
 mutate_gene(Gene, NewGene) :-
     gene(Gene),
     string_length(Gene, L),
@@ -164,7 +175,9 @@ mutate_gene(Gene, NewGene) :-
     random_between(0, K, Index),
     random_member(Indel, ["insertion","deletion","replacement"]),
     mutate_pos(Indel, Index, Gene, NewGene),
-    !.
+    !
+)
+).
 
 map_mutate_gene([],[]).
 map_mutate_gene([G | R], [NewG | NR]):-
