@@ -16,9 +16,13 @@ This module contains the optimizer module, which is responsible for the optimiza
 :- asserta(
 (
 optimizer("stringopt", Selectionop, Crossoverop, Mutationop) :-
+    Selectionop="top10",
+    Crossoverop="headtail",
+    Mutationop="indel",
     selection(Selectionop, _, _, _),
     crossover(Crossoverop, _, _),
-    mutate(Mutationop, _, _)
+    mutate(Mutationop, _, _),
+    !
 )
 ).
 
@@ -41,6 +45,21 @@ selection("top10", Costfn, [LastEpoch | Prev], [NewPopulation | [LastEpoch | Pre
         LastEpoch),
     keysort(Pairs, Sorted),
     take(10, Sorted, NewPopulationKV),
+    pairs_values(NewPopulationKV, NewPopulation),
+    !
+)
+).
+
+:- asserta(
+(
+selection("top1k", Costfn, [LastEpoch | Prev], [NewPopulation | [LastEpoch | Prev] ]) :-
+    mapcost(Costfn, LastEpoch, Costs),
+    pairs_keys_values(
+        Pairs, 
+        Costs,
+        LastEpoch),
+    keysort(Pairs, Sorted),
+    take(1000, Sorted, NewPopulationKV),
     pairs_values(NewPopulationKV, NewPopulation),
     !
 )
@@ -152,7 +171,7 @@ map_mutate_gene([G | R], [NewG | NR]):-
     mutate_gene(G, NewG),
     map_mutate_gene(R,NR).
 
-:- dynamic crossover/3.
+:- dynamic mutate/3.
 
 :- asserta(
 (

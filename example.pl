@@ -1,15 +1,17 @@
 :- use_module(src/tasks).
 :- use_module(src/genetic_programming).
+:- use_module(src/optimizer).
 
 % adding tasks is easy by dynamically adding a task definition here
 
 target_fun(X, Y) :-
-    Y is X*X+1.
+    Y is X*X+1.0.
 
+:- retractall(tasks:task).
 :- asserta(
 (
 tasks:task("Learn_polynomial_function", "distance_from_fun", Initializer, "zero_cost") :-
-    Initializer = [["target_fun(X,Y) :- Y = X."]],
+    Initializer = [["pred_fun(X,Y) :- Y is X."]],
     true
 )
 ).
@@ -17,26 +19,30 @@ tasks:task("Learn_polynomial_function", "distance_from_fun", Initializer, "zero_
 
 :- dynamic pred_fun/2.
 
-%:- asserta(pred_fun(A, B) :- true).
-
 evalu(Str, Inp, Res) :-
     term_string(T, Str),
+    retractall(pred_fun),
     asserta(T),
     apply(pred_fun, [Inp, Res]),
     !.
 
-% evalu("pred_fun(A,B) :- A is B+1.", 1, R).
-% catch(evalu("pred_fun(A,B):- B is A+1., 1, P), _, P=100).
+evalua(Str, Inp, Res) :-
+    string_concat("pred_fun(X,Y) :- Y is", _, Str),evalu(Str, Inp, Res);
+    Res=200.0.
+
 
 eval_catch(Gene, Inp, Pred) :-
-    catch(evalu(Gene, Inp, P), _, P=100),
-    Pred is P,
+    catch(evalua(Gene, Inp, P), Error, P=100.0),
+    Pred = P,
     !.
 
+% eval_catch("pred_fun(A,B):- B is A+1., 1, P).
+:- retractall(tasks:costfn).
 :- asserta(
 (
 tasks:costfn("distance_from_fun", Gene, Cost) :- 
-    Input = 1,
+    %random(0.0, 100.0, Input),
+    Input=1.0,
     %number_string(Input, Gene),
     target_fun(Input, Res),
     eval_catch(Gene, Input, Pred),
@@ -45,14 +51,19 @@ tasks:costfn("distance_from_fun", Gene, Cost) :-
 ).
 
 
-% :- Gene="write(1", tasks:costfn("distance_from_fun", Gene, C), write(C).
-% :- Gene="1", tasks:costfn("distance_from_fun", Gene, C), write(C).
-% :- Gene="target_fun(X,Y):- Y=X*X+1.", tasks:costfn("distance_from_fun", Gene, C), write(C).
+:- asserta(
+(
+optimizer:optimizer("termopt", Selectionop, Crossoverop, Mutationop) :-
+    Selectionop="top1k",
+    Crossoverop="headtail",
+    Mutationop="indel",
+    selection(Selectionop, _, _, _),
+    crossover(Crossoverop, _, _),
+    mutate(Mutationop, _, _),
+    !
+)
+).
 
-% Gene="target_fun(X,Y):- Y=X*X+1.", evalu(Gene, 1, Res).
 
-
-
-%:- genetic_programming:genetic_programming("Learn_polynomial_function", A, B).
-
-
+%:- genetic_programming:genetic_programming("Learn_polynomial_function", "stringopt", B).
+:- genetic_programming:genetic_programming("Learn_polynomial_function", "termopt", B).

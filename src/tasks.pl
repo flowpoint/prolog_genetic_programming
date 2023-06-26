@@ -11,7 +11,11 @@ This module also contains the cost functions and stop conditions for the optimiz
 :- dynamic task/4.
 
 % Target String
-target_string("Hello").
+:- dynamic target_string/1.
+
+:- asserta(
+target_string("Hello")
+).
 
 % Task 1: Learn a String with levenshtein distance
 :- asserta(
