@@ -11,16 +11,16 @@ This module also contains the cost functions and stop conditions for the optimiz
 target_string("Hello").
 
 % Task 1: Learn a String with levenshtein distance
-task("Learn_String_with_levenshtein", "levenshtein",[["Levenshtein Go","Es ist warm","Eis am Stiel","","","","",""]],"zero_cost") :-
+task("Learn_String_with_levenshtein", "levenshtein",[["Levenshtein Go","In Diana Jones","Eis am Stiel","","","","",""]],"zero_cost") :-
     true.
 
 % Task 2: Learn a String with quadratic cost
-task("Learn_String_with_quadratic", "quadratic_cost",[["Quadratic Go","Sommerfest","Polizei auf Segway","","","","",""]],"zero_cost") :-
+task("Learn_String_with_quadratic", "quadratic_cost",[["Quadratic Go","Jane Blond","Alte Schachteln frisch gebügelt","","","","",""]],"zero_cost") :-
     true.
 
 % Task 3: Learn a String with Generate Population
 task("Learn_String_with_Generate_Pop", "quadratic_cost", Initializer, "zero_cost") :-
-    generate_random_string_list(8,10,Population),
+    generate_population(2,3,Population),
     Initializer = [Population],
     true.
 
@@ -146,7 +146,8 @@ calculate_cost_helper([C1 | CodeRest], [T1 | TargetRest], Acc, Cost) :-
  * @return The list of random strings as Population
 */
 generate_population(Size, Char_Limit, Population) :-
-    generate_genes_list_helper(Size, Char_Limit, Population).
+    generate_genes_list_helper(Size, Char_Limit, Population),
+    !.
 
 generate_genes_list_helper(0, _, []).
 
@@ -168,6 +169,6 @@ generate_random_code_helper(Length, Acc, Gene) :-
     Length > 0,
     random_between(65, 90, Code),
     char_code(Char, Code),
-    atom_concat(Acc, Char, Acc1),
+    string_concat(Acc, Char, Acc1),
     Length1 is Length - 1,
     generate_random_code_helper(Length1, Acc1, Gene).

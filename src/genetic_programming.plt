@@ -42,5 +42,6 @@ test(run_evolution_stop) :-
    Taskname = "Learn_String_with_quadratic",
    run_evolution(Taskname, "stringopt", _, [["Hello"], ["", ""]], "stopcondition").
 
+% Test for genetic_programming/3 with task "Learn_String_with_Generate_Pop" and optimizer "stringopt"
 
 :- end_tests(genetic_programming).
